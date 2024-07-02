@@ -1,20 +1,26 @@
 package br.ufscar.dc.compiladores.alguma.grammar;
 
 import main.java.br.ufscar.dc.compiladores.alguma.grammar.AlgumaSemanticoUtils;
+import main.java.br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos;
 import main.java.br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos.TipoAlguma;
 
-public class AlgumaSemantico extends ExpressoesBaseVisitor<Double> {
+public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Double> {
+    
+    TabelaDeSimbolos tabela;
+    
     @Override
-    public Double visitPrograma(ProgramaContext ctx){
-        return visitExpressao(ctx.expressao());
+    public Void visitPrograma(AlgumaGrammarParser.ProgramaContext ctx) {
+        tabela = new TabelaDeSimbolos();
+        return super.visitPrograma(ctx);
     }
     
-    public Void visitDeclaracao(DeclaracaoContext ctx){
+    public Void visitDeclaracao(DeclaracoesContext ctx){
         String nomeVar = ctx.VARIAVEL().getText();
         String strTipoVar = ctx.TIPO_VAR().getText();
 
         TipoAlguma tipoVar = TipoAlguma.INVALIDO;
 
+        
         switch(strTipoVar){
             case "INTEIRO":
                 tipovar = TipoAlguma.INTEIRO;
@@ -33,13 +39,13 @@ public class AlgumaSemantico extends ExpressoesBaseVisitor<Double> {
             tabela.adicionar(nomeVar, tipoVar);
         }
 
-        return super.visitDeclaracao(ctx);
+        return super.visitDeclaracoes(ctx);
     }
 
 
     @Override
-    public Void visitComandoAtribuicao(AlgumaParser.ComandoAtribuicaoContext ctx) {
-        TipoAlguma tipoExpressao = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.expressaoAritmetica());
+    public Void visitComandoAtribuicao(AlgumaGrammarParser.CmdAtribuicaoContext ctx) {
+        TipoAlguma tipoExpressao = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.Exp_aritmetica());
         if (tipoExpressao != TipoAlguma.INVALIDO) {
             String nomeVar = ctx.VARIAVEL().getText();
             if (!tabela.existe(nomeVar)) {
@@ -51,12 +57,12 @@ public class AlgumaSemantico extends ExpressoesBaseVisitor<Double> {
                 }
             }
         }
-        return super.visitComandoAtribuicao(ctx);
+        return super.visitCmdAtribuicao(ctx);
     }
 
     @Override
-    public Void visitComandoChamada(AlgumaParser.ComandoChamadaContext ctx) {
-        TipoAlguma tipoChamada = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.expressaoAritmetica());
+    public Void visitComandoChamada(AlgumaGrammarParser.CmdChamadaContext ctx) {
+        TipoAlguma tipoChamada = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.Exp_aritmetica());
         if (tipoExpressao != TipoAlguma.INVALIDO) {
             String nomeVar = ctx.VARIAVEL().getText();
             if (!tabela.existe(nomeVar)) {
@@ -68,22 +74,22 @@ public class AlgumaSemantico extends ExpressoesBaseVisitor<Double> {
                 }
             }
         }
-        return super.visitComandoAtribuicao(ctx);
+        return super.visitCmdChamada(ctx);
     }
 
     @Override
-    public Void visitComandoEntrada(AlgumaParser.ComandoEntradaContext ctx) {
+    public Void visitComandoEntrada(AlgumaGrammarParser.CmdLeiaContext ctx) {
         String nomeVar = ctx.VARIAVEL().getText();
         if (!tabela.existe(nomeVar)) {
             AlgumaSemanticoUtils.adicionarErroSemantico(ctx.VARIAVEL().getSymbol(), "Variável " + nomeVar + " não foi declarada antes do uso");
         }
-        return super.visitComandoEntrada(ctx);
+        return super.visitCmdLeia(ctx);
     }
 
     @Override
-    public Void visitExpressaoAritmetica(AlgumaParser.ExpressaoAritmeticaContext ctx) {
+    public Void visitExpressaoAritmetica(AlgumaGrammarParser.Exp_aritmeticaContext ctx) {
         AlgumaSemanticoUtils.verificarTipo(tabela, ctx);
-        return super.visitExpressaoAritmetica(ctx);
+        return super.visitExp_aritmetica(ctx);
     }
 
 }

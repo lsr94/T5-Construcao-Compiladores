@@ -5,7 +5,7 @@ Desenvolvido por:
 - Letícia Bossatto Marchezi, 791003
 */
 package br.ufscar.dc.compiladores.alguma.grammar;
-
+import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.ProgramaContext;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -33,9 +33,9 @@ public class Principal {
 
         try {
             CharStream cs = CharStreams.fromFileName(args[0]);
-            AlgumaLexer lexer = new AlgumaLexer(cs);
+            AlgumaGrammarLexer lexer = new AlgumaGrammarLexer(cs);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
-            AlgumaParser parser = new AlgumaParser(tokens);
+            AlgumaGrammarParser parser = new AlgumaGrammarParser(tokens);
             ProgramaContext arvore = parser.programa();
             AlgumaSemantico as = new AlgumaSemantico();
             as.visitPrograma(arvore);

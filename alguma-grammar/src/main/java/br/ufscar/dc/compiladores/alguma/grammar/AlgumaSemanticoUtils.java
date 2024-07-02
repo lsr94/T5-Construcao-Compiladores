@@ -1,14 +1,22 @@
 package main.java.br.ufscar.dc.compiladores.alguma.grammar;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.antlr.v4.runtime.Token;
+
+import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser;
 
 public class AlgumaSemanticoUtils {
+    public static List<String> errosSemanticos = new ArrayList<>();
+    
     public static void adicionarErroSemantico(Token t, String mensagem) {
         int linha = t.getLine();
         int coluna = t.getCharPositionInLine();
         errosSemanticos.add(String.format("Erro %d:%d - %s", linha, coluna, mensagem));
     }
     
-    public static TabelaDeSimbolos.TipoAlguma verificarTipo(TabelaDeSimbolos tabela, AlgumaParser.ExpressaoAritmeticaContext ctx) {
+    // Verifica os tipos das expressões aritméticas
+    public static TabelaDeSimbolos.TipoAlguma verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.Exp_aritmeticaContext ctx) {
         TabelaDeSimbolos.TipoAlguma ret = null;
         for (var ta : ctx.termoAritmetico()) {
             TabelaDeSimbolos.TipoAlguma aux = verificarTipo(tabela, ta);
@@ -23,10 +31,11 @@ public class AlgumaSemanticoUtils {
         return ret;
     }
 
-    public static TabelaDeSimbolos.TipoAlguma verificarTipo(TabelaDeSimbolos tabela, AlgumaParser.TermoAritmeticoContext ctx) {
+    // Verifica o tipo do Termo Aritmético
+    public static TabelaDeSimbolos.TipoAlguma verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.TermoContext ctx) {
         TabelaDeSimbolos.TipoAlguma ret = null;
 
-        for (var fa : ctx.fatorAritmetico()) {
+        for (var fa : ctx.fator()) {
             TabelaDeSimbolos.TipoAlguma aux = verificarTipo(tabela, fa);
             if (ret == null) {
                 ret = aux;
@@ -37,8 +46,8 @@ public class AlgumaSemanticoUtils {
         }
         return ret;
     }
-
-    public static TabelaDeSimbolos.TipoAlguma verificarTipo(TabelaDeSimbolos tabela, AlgumaParser.FatorAritmeticoContext ctx) {
+    // Verifica o tipo do Fator Aritmético
+    public static TabelaDeSimbolos.TipoAlguma verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.FatorContext ctx) {
         if (ctx.NUMINT() != null) {
             return TabelaDeSimbolos.TipoAlguma.INTEIRO;
         }
@@ -58,6 +67,7 @@ public class AlgumaSemanticoUtils {
         return verificarTipo(tabela, ctx.expressaoAritmetica());
     }
     
+
     public static TabelaDeSimbolos.TipoAlguma verificarTipo(TabelaDeSimbolos tabela, String nomeVar) {
         return tabela.verificar(nomeVar);
     }
