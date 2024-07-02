@@ -1,6 +1,8 @@
 package br.ufscar.dc.compiladores.alguma.grammar;
 
+
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.DeclaracoesContext;
+import main.java.br.ufscar.dc.compiladores.alguma.grammar.Escopos;
 import main.java.br.ufscar.dc.compiladores.alguma.grammar.AlgumaSemanticoUtils;
 import main.java.br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos;
 import main.java.br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos.TipoAlguma;
@@ -18,7 +20,27 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Double> {
         tabela = new TabelaDeSimbolos();
         return super.visitPrograma(ctx);
     }
+
+    //
+    @Override
+    public Void visitVariavel(AlgumaParser.VariavelContext ctx) {
+        String nomeVar = ctx.VARIAVEL().getText();
+        String strTipoVar = ctx.TIPO_VAR().getText();
+        TipoAlguma tipoVar = TipoAlguma.INVALIDO;
+        switch (strTipoVar) {
+            case "INTEIRO":
+                tipoVar = TipoAlguma.INTEIRO;
+                break;
+            case "REAL":
+                tipoVar = TipoAlguma.REAL;
+                break;
+            default:
+                // Nunca irá acontecer, pois o analisador sintático
+                // não permite
+                break;
+        }
     
+    // mudamos aqui ja!
     public Void visitDeclaracao(DeclaracoesContext ctx){
 
         tabela = escoposAninhados.obterEscopoAtual();
@@ -56,7 +78,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Double> {
 
     //     return super.visitDeclaracoes(ctx);
     }
-    
+
     @Override
     public Void visitComandoAtribuicao(AlgumaGrammarParser.CmdAtribuicaoContext ctx) {
         
@@ -64,13 +86,13 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Double> {
         
         TipoAlguma tipoExpressao = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.Exp_aritmetica());
         if (tipoExpressao != TipoAlguma.INVALIDO) {
-            String nomeVar = ctx.VARIAVEL().getText();
+            String nomeVar = ctx.IDENT().getText();
             if (!tabela.existe(nomeVar)) {
-                AlgumaSemanticoUtils.adicionarErroSemantico(ctx.VARIAVEL().getSymbol(), "Variável " + nomeVar + " não foi declarada antes do uso");
+                AlgumaSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "Variável " + nomeVar + " não foi declarada antes do uso");
             } else {
                 TipoAlguma tipoVariavel = AlgumaSemanticoUtils.verificarTipo(tabela, nomeVar);
                 if (tipoVariavel != tipoExpressao) {
-                    AlgumaSemanticoUtils.adicionarErroSemantico(ctx.VARIAVEL().getSymbol(), "Tipo da variável " + nomeVar + " não é compatível com o tipo da expressão");
+                    AlgumaSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "Tipo da variável " + nomeVar + " não é compatível com o tipo da expressão");
                 }
             }
         }
@@ -81,13 +103,13 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Double> {
     public Void visitComandoChamada(AlgumaGrammarParser.CmdChamadaContext ctx) {
         TipoAlguma tipoChamada = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.Exp_aritmetica());
         if (tipoExpressao != TipoAlguma.INVALIDO) {
-            String nomeVar = ctx.VARIAVEL().getText();
+            String nomeVar = ctx.IDENT().getText();
             if (!tabela.existe(nomeVar)) {
-                AlgumaSemanticoUtils.adicionarErroSemantico(ctx.VARIAVEL().getSymbol(), "Variável " + nomeVar + " não foi declarada antes do uso");
+                AlgumaSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "Variável " + nomeVar + " não foi declarada antes do uso");
             } else {
                 TipoAlguma tipoVariavel = AlgumaSemanticoUtils.verificarTipo(tabela, nomeVar);
                 if (tipoVariavel != tipoExpressao) {
-                    AlgumaSemanticoUtils.adicionarErroSemantico(ctx.VARIAVEL().getSymbol(), "Tipo da variável " + nomeVar + " não é compatível com o tipo da expressão");
+                    AlgumaSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "Tipo da variável " + nomeVar + " não é compatível com o tipo da expressão");
                 }
             }
         }
@@ -96,9 +118,9 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Double> {
 
     @Override
     public Void visitComandoEntrada(AlgumaGrammarParser.CmdLeiaContext ctx) {
-        String nomeVar = ctx.VARIAVEL().getText();
+        String nomeVar = ctx.IDENT().getText();
         if (!tabela.existe(nomeVar)) {
-            AlgumaSemanticoUtils.adicionarErroSemantico(ctx.VARIAVEL().getSymbol(), "Variável " + nomeVar + " não foi declarada antes do uso");
+            AlgumaSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "Variável " + nomeVar + " não foi declarada antes do uso");
         }
         return super.visitCmdLeia(ctx);
     }
