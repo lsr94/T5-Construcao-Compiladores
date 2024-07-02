@@ -1,4 +1,4 @@
-package br.ufscar.dc.compiladores.alguma.grammar;
+package main.java.br.ufscar.dc.compiladores.alguma.grammar;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 public class Escopos {
 
     private LinkedList<TabelaDeSimbolos> pilhaDeTabelas;
-
+    
     public Escopos() {
         pilhaDeTabelas = new LinkedList<>();
         criarNovoEscopo();

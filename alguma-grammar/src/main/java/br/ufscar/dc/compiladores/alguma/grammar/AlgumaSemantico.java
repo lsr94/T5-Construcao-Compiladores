@@ -1,5 +1,6 @@
 package br.ufscar.dc.compiladores.alguma.grammar;
 
+import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.DeclaracoesContext;
 import main.java.br.ufscar.dc.compiladores.alguma.grammar.AlgumaSemanticoUtils;
 import main.java.br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos;
 import main.java.br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos.TipoAlguma;
@@ -8,6 +9,10 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Double> {
     
     TabelaDeSimbolos tabela;
     
+    static Escopos escoposAninhados = new Escopos();
+
+    TabelaDeSimbolos tabelaEscopos;
+
     @Override
     public Void visitPrograma(AlgumaGrammarParser.ProgramaContext ctx) {
         tabela = new TabelaDeSimbolos();
@@ -15,36 +20,48 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Double> {
     }
     
     public Void visitDeclaracao(DeclaracoesContext ctx){
-        String nomeVar = ctx.VARIAVEL().getText();
-        String strTipoVar = ctx.TIPO_VAR().getText();
 
-        TipoAlguma tipoVar = TipoAlguma.INVALIDO;
+        tabela = escoposAninhados.obterEscopoAtual();
 
-        
-        switch(strTipoVar){
-            case "INTEIRO":
-                tipovar = TipoAlguma.INTEIRO;
-            case "REAL":
-                tipovar = TipoAlguma.REAL;
-            case "LITERAL":
-                tipovar = TipoAlguma.LITERAL;
-            case "BOOL":
-                tipovar = TipoAlguma.BOOL;
-        }
-
-        // Verificar se a variável já foi declarada
-        if (tabela.existe(nomeVar)) {
-            AlgumaSemanticoUtils.adicionarErroSemantico(ctx.VARIAVEL().getSymbol(), "Variável " + nomeVar + " já existe");
-        } else {
-            tabela.adicionar(nomeVar, tipoVar);
-        }
+        for (AlgumaGrammarParser.Decl_local_globalContext declaracao: ctx.decl_local_global())
+            visitDecl_local_global(declaracao);
 
         return super.visitDeclaracoes(ctx);
+
+        
+
+    //     String nomeVar = ctx.VARIAVEL().getText();
+    //     String strTipoVar = ctx.TIPO_VAR().getText();
+
+    //     TipoAlguma tipoVar = TipoAlguma.INVALIDO;
+
+        
+    //     switch(strTipoVar){
+    //         case "INTEIRO":
+    //             tipovar = TipoAlguma.INTEIRO;
+    //         case "REAL":
+    //             tipovar = TipoAlguma.REAL;
+    //         case "LITERAL":
+    //             tipovar = TipoAlguma.LITERAL;
+    //         case "BOOL":
+    //             tipovar = TipoAlguma.BOOL;
+    //     }
+
+    //     // Verificar se a variável já foi declarada
+    //     if (tabela.existe(nomeVar)) {
+    //         AlgumaSemanticoUtils.adicionarErroSemantico(ctx.VARIAVEL().getSymbol(), "Variável " + nomeVar + " já existe");
+    //     } else {
+    //         tabela.adicionar(nomeVar, tipoVar);
+    //     }
+
+    //     return super.visitDeclaracoes(ctx);
     }
-
-
+    
     @Override
     public Void visitComandoAtribuicao(AlgumaGrammarParser.CmdAtribuicaoContext ctx) {
+        
+        
+        
         TipoAlguma tipoExpressao = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.Exp_aritmetica());
         if (tipoExpressao != TipoAlguma.INVALIDO) {
             String nomeVar = ctx.VARIAVEL().getText();
