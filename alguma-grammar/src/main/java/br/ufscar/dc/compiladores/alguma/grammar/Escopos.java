@@ -1,4 +1,4 @@
-package main.java.br.ufscar.dc.compiladores.alguma.grammar;
+package br.ufscar.dc.compiladores.alguma.grammar;
 
 import java.util.LinkedList;
 import java.util.List;

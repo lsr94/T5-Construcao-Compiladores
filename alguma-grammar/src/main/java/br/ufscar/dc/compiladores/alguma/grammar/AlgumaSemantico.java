@@ -2,10 +2,12 @@ package br.ufscar.dc.compiladores.alguma.grammar;
 
 
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.DeclaracoesContext;
-import main.java.br.ufscar.dc.compiladores.alguma.grammar.Escopos;
-import main.java.br.ufscar.dc.compiladores.alguma.grammar.AlgumaSemanticoUtils;
-import main.java.br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos;
-import main.java.br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos.TipoAlguma;
+import br.ufscar.dc.compiladores.alguma.grammar.Escopos;
+import br.ufscar.dc.compiladores.alguma.grammar.AlgumaSemanticoUtils;
+import br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos;
+import br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos.AlgumaGrammar;
+
+/* #################### FAZER A SEMANTICO UTILS PRIMEIRO #################### */
 
 public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Double> {
     
@@ -17,32 +19,19 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Double> {
 
     @Override
     public Void visitPrograma(AlgumaGrammarParser.ProgramaContext ctx) {
+        // Inicialização do programa.
         tabela = new TabelaDeSimbolos();
         return super.visitPrograma(ctx);
     }
 
-    //
+    // VERIFICAR !!!!!!!
     @Override
-    public Void visitVariavel(AlgumaParser.VariavelContext ctx) {
-        String nomeVar = ctx.VARIAVEL().getText();
-        String strTipoVar = ctx.TIPO_VAR().getText();
-        TipoAlguma tipoVar = TipoAlguma.INVALIDO;
-        switch (strTipoVar) {
-            case "INTEIRO":
-                tipoVar = TipoAlguma.INTEIRO;
-                break;
-            case "REAL":
-                tipoVar = TipoAlguma.REAL;
-                break;
-            default:
-                // Nunca irá acontecer, pois o analisador sintático
-                // não permite
-                break;
-        }
+    public void adicionaVariavelTabela() {
     
-    // mudamos aqui ja!
-    public Void visitDeclaracao(DeclaracoesContext ctx){
-
+    }
+    
+    @Override
+    public Void visitDeclaracoes(AlgumaGrammarParser.DeclaracoesContext ctx){
         tabela = escoposAninhados.obterEscopoAtual();
 
         for (AlgumaGrammarParser.Decl_local_globalContext declaracao: ctx.decl_local_global())
@@ -50,47 +39,18 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Double> {
 
         return super.visitDeclaracoes(ctx);
 
-        
-
-    //     String nomeVar = ctx.VARIAVEL().getText();
-    //     String strTipoVar = ctx.TIPO_VAR().getText();
-
-    //     TipoAlguma tipoVar = TipoAlguma.INVALIDO;
-
-        
-    //     switch(strTipoVar){
-    //         case "INTEIRO":
-    //             tipovar = TipoAlguma.INTEIRO;
-    //         case "REAL":
-    //             tipovar = TipoAlguma.REAL;
-    //         case "LITERAL":
-    //             tipovar = TipoAlguma.LITERAL;
-    //         case "BOOL":
-    //             tipovar = TipoAlguma.BOOL;
-    //     }
-
-    //     // Verificar se a variável já foi declarada
-    //     if (tabela.existe(nomeVar)) {
-    //         AlgumaSemanticoUtils.adicionarErroSemantico(ctx.VARIAVEL().getSymbol(), "Variável " + nomeVar + " já existe");
-    //     } else {
-    //         tabela.adicionar(nomeVar, tipoVar);
-    //     }
-
-    //     return super.visitDeclaracoes(ctx);
-    }
-
     @Override
     public Void visitComandoAtribuicao(AlgumaGrammarParser.CmdAtribuicaoContext ctx) {
         
         
         
-        TipoAlguma tipoExpressao = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.Exp_aritmetica());
-        if (tipoExpressao != TipoAlguma.INVALIDO) {
+        AlgumaGrammar tipoExpressao = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.Exp_aritmetica());
+        if (tipoExpressao != AlgumaGrammar.INVALIDO) {
             String nomeVar = ctx.IDENT().getText();
             if (!tabela.existe(nomeVar)) {
                 AlgumaSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "Variável " + nomeVar + " não foi declarada antes do uso");
             } else {
-                TipoAlguma tipoVariavel = AlgumaSemanticoUtils.verificarTipo(tabela, nomeVar);
+                AlgumaGrammar tipoVariavel = AlgumaSemanticoUtils.verificarTipo(tabela, nomeVar);
                 if (tipoVariavel != tipoExpressao) {
                     AlgumaSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "Tipo da variável " + nomeVar + " não é compatível com o tipo da expressão");
                 }
@@ -101,13 +61,13 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Double> {
 
     @Override
     public Void visitComandoChamada(AlgumaGrammarParser.CmdChamadaContext ctx) {
-        TipoAlguma tipoChamada = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.Exp_aritmetica());
-        if (tipoExpressao != TipoAlguma.INVALIDO) {
+        AlgumaGrammar tipoChamada = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.Exp_aritmetica());
+        if (tipoExpressao != AlgumaGrammar.INVALIDO) {
             String nomeVar = ctx.IDENT().getText();
             if (!tabela.existe(nomeVar)) {
                 AlgumaSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "Variável " + nomeVar + " não foi declarada antes do uso");
             } else {
-                TipoAlguma tipoVariavel = AlgumaSemanticoUtils.verificarTipo(tabela, nomeVar);
+                AlgumaGrammar tipoVariavel = AlgumaSemanticoUtils.verificarTipo(tabela, nomeVar);
                 if (tipoVariavel != tipoExpressao) {
                     AlgumaSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "Tipo da variável " + nomeVar + " não é compatível com o tipo da expressão");
                 }

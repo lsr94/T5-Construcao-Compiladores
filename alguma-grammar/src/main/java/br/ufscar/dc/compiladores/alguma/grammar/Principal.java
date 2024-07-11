@@ -9,8 +9,6 @@ import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.ProgramaCont
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -47,7 +45,7 @@ public class Principal {
         }
 
         // Escreve o resultado do buffer no arquivo de saída
-        //writeOutputToFile(args[1]);
+        writeOutputToFile(args[1]);
     }
 
     /**

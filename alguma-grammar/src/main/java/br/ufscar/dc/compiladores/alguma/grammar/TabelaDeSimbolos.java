@@ -1,10 +1,10 @@
-package main.java.br.ufscar.dc.compiladores.alguma.grammar;
+package br.ufscar.dc.compiladores.alguma.grammar;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class TabelaDeSimbolos {
-    public enum TipoAlguma {
+    public enum AlgumaGrammar {
         INTEIRO,
         REAL,
         INVALIDO,
@@ -14,9 +14,9 @@ public class TabelaDeSimbolos {
 
     class EntradaTabelaDeSimbolos {
         String nome;
-        TipoAlguma tipo;
+        AlgumaGrammar tipo;
 
-        private EntradaTabelaDeSimbolos(String nome, TipoAlguma tipo) {
+        private EntradaTabelaDeSimbolos(String nome, AlgumaGrammar tipo) {
             this.nome = nome;
             this.tipo = tipo;
         }
@@ -28,7 +28,7 @@ public class TabelaDeSimbolos {
         this.tabela = new HashMap<>();
     }
     
-    public void adicionar(String nome, TipoAlguma tipo) {
+    public void adicionar(String nome, AlgumaGrammar tipo) {
         tabela.put(nome, new EntradaTabelaDeSimbolos(nome, tipo));
     }
     
@@ -36,7 +36,7 @@ public class TabelaDeSimbolos {
         return tabela.containsKey(nome);
     }
     
-    public TipoAlguma verificar(String nome) {
+    public AlgumaGrammar verificar(String nome) {
         return tabela.get(nome).tipo;
     }
 
