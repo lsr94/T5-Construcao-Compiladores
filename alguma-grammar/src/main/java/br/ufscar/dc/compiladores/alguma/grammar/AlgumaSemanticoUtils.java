@@ -3,7 +3,6 @@ package br.ufscar.dc.compiladores.alguma.grammar;
 import java.util.ArrayList;
 import java.util.List;
 import org.antlr.v4.runtime.Token;
-import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser;
 import br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos.AlgumaGrammar;
 
 public class AlgumaSemanticoUtils {
