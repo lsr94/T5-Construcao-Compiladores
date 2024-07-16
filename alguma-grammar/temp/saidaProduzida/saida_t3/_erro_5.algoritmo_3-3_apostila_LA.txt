@@ -1,0 +1,10 @@
+Linha 8:  tipo logico nao declarado
+Linha 8:  tipo logico nao declarado
+Linha 8:  tipo logico nao declarado
+Linha 8:  tipo logico nao declarado
+Linha 8:  tipo logico nao declarado
+Linha 15: Expressão lado1+lado3 contém tipos incompatíveis
+Linha 16: Expressão lado1+lado2 contém tipos incompatíveis
+Linha 15: Expressão lado1+lado3 contém tipos incompatíveis
+Linha 16: Expressão lado1+lado2 contém tipos incompatíveis
+Fim da compilacao

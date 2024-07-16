@@ -24,9 +24,11 @@ br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$ConstantesContext.c
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$CmdChamadaContext.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$Op2Context.class
+AlgumaGrammar.tokens
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$CmdFacaContext.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$Op_relacionalContext.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$IdentificadorContext.class
+AlgumaGrammarLexer.tokens
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarLexer.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$Op_logico_1Context.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$ProgramaContext.class

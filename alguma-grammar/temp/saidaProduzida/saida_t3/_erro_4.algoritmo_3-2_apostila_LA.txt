@@ -1,0 +1,5 @@
+Linha 12: Expressão sobrenome+", "+1 contém tipos incompatíveis
+Linha 12: Expressão sobrenome+", "+1 contém tipos incompatíveis
+Linha 12: Expressão sobrenome+", "+1 contém tipos incompatíveis
+Linha 12: Expressão sobrenome+", "+1 contém tipos incompatíveis
+Fim da compilacao

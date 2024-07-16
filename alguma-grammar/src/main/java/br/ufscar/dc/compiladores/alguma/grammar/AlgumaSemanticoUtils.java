@@ -12,8 +12,7 @@ public class AlgumaSemanticoUtils {
     // Método auxiliar para adicionar os erros identificados
     public static void adicionarErroSemantico(Token t, String mensagem) {
         int linha = t.getLine();
-        int coluna = t.getCharPositionInLine();
-        errosSemanticos.add(String.format("Erro na linha %d:%d - %s", linha, coluna, mensagem));
+        errosSemanticos.add(String.format("Linha %d: %s", linha, mensagem));
     }
     
     /*Método auxiliar que verifica a compatibilidade entre operadores aritméticos

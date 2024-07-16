@@ -44,8 +44,11 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         }
 
         // Verificando se o tipo da variável é 'INVÁLIDO' para retornar mensagem de erro
-        if (tipoItem == AlgumaGrammar.INVALIDO)
+        if (tipoItem == AlgumaGrammar.INVALIDO){
+            tabelaEscopos.adicionar(nomeVariavel, tipoItem);
             AlgumaSemanticoUtils.adicionarErroSemantico(TipoToken, " tipo " + tipoVariavel + " nao declarado");
+        }
+            
         /* Se o tipo da variável não for 'INVÁLIDO', verifica se ela já existe
         Caso não exista: adiciona
         Caso exista: retorna erro semântico, pois já foi declarada */
@@ -75,11 +78,11 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
 
         if (ctx.getText().contains("declare")) {
             tipoVariavel = ctx.variavel().tipo().getText();
-
             // Adiciona a variável atual na tabela (a verificação de variável repetida ocorre no método adicionaVariavelTabela)
             for (AlgumaGrammarParser.IdentificadorContext ident : ctx.variavel().identificador()) {
                 nomeVariavel = ident.getText();
                 adicionaVariavelTabela(nomeVariavel, tipoVariavel, ident.getStart(), ctx.variavel().tipo().getStart());
+                
             }
         }
 
@@ -93,11 +96,11 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         
         // Identifica se é uma declaração local ou global
         if (ctx.declaracao_local() != null){
-            System.out.print("Entrou na local!");    
+            System.out.println("Entrou na local!");    
             visitDeclaracao_local(ctx.declaracao_local());
         }
         else if (ctx.declaracao_global() != null)
-            System.out.print("Entrou na global!");    
+            System.out.println("Entrou na global!");    
         //visitDeclaracao_global(ctx.declaracao_global());
 
         return super.visitDecl_local_global(ctx);

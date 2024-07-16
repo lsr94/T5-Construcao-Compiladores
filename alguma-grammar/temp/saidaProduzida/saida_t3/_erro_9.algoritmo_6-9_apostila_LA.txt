@@ -1,0 +1,17 @@
+Linha 11: Expressão 0+"NADA" contém tipos incompatíveis
+Linha 11: Expressão 0+"NADA" contém tipos incompatíveis
+Linha 11: Expressão 0+"NADA" contém tipos incompatíveis
+Linha 11: Expressão 0+"NADA" contém tipos incompatíveis
+Linha 16: identificador preco_final nao declarado
+Linha 16: identificador preco_final nao declarado
+Linha 16: identificador preco_final nao declarado
+Linha 16: identificador preco_final nao declarado
+Linha 19: Termo preco*quantidade contém tipos incompatíveis
+Linha 19: Termo preco*quantidade contém tipos incompatíveis
+Linha 19: Termo preco*quantidade contém tipos incompatíveis
+Linha 19: Termo preco*quantidade contém tipos incompatíveis
+Linha 30: Termo 1.0*somaUnitarios/numeroItens contém tipos incompatíveis
+Linha 30: Termo 1.0*somaUnitarios/numeroItens contém tipos incompatíveis
+Linha 30: Termo 1.0*somaUnitarios/numeroItens contém tipos incompatíveis
+Linha 30: Termo 1.0*somaUnitarios/numeroItens contém tipos incompatíveis
+Fim da compilacao
