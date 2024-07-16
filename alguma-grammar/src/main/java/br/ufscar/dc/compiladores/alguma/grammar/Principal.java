@@ -38,6 +38,7 @@ public class Principal {
             AlgumaSemantico as = new AlgumaSemantico();
             as.visitPrograma(arvore);
             AlgumaSemanticoUtils.errosSemanticos.forEach((s) -> System.out.println(s));
+            AlgumaSemanticoUtils.errosSemanticos.forEach((s) -> buffer.append(s+"\n"));
             
         } catch (Exception ex) {
             // Detecção de exceções
@@ -45,6 +46,7 @@ public class Principal {
         }
 
         // Escreve o resultado do buffer no arquivo de saída
+        buffer.append("Fim da compilacao\n");
         writeOutputToFile(args[1]);
     }
 

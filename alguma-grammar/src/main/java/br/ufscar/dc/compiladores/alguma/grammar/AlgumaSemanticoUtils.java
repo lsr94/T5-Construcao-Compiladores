@@ -111,7 +111,7 @@ public class AlgumaSemanticoUtils {
             else {
                 TabelaDeSimbolos tabelaAux = AlgumaSemantico.escoposAninhados.percorrerEscoposAninhados().get(AlgumaSemantico.escoposAninhados.percorrerEscoposAninhados().size() - 1);
                 if (!tabelaAux.existe(nome)) {
-                    adicionarErroSemantico(ctx.identificador().getStart(), "identificador " + ctx.identificador().getText() + " não declarado");
+                    adicionarErroSemantico(ctx.identificador().getStart(), "identificador " + ctx.identificador().getText() + " nao declarado");
                     retorno = AlgumaGrammar.INVALIDO;
                 } else 
                     retorno = tabelaAux.verificar(nome);
@@ -134,7 +134,7 @@ public class AlgumaSemanticoUtils {
             nome = ctx.identificador().getText();
         
             if (!tabela.existe(nome)) {
-                adicionarErroSemantico(ctx.identificador().getStart(), "identificador " + ctx.identificador().getText() + " não declarado");
+                adicionarErroSemantico(ctx.identificador().getStart(), "identificador " + ctx.identificador().getText() + " nao declarado");
                 retorno = AlgumaGrammar.INVALIDO;
             } else 
                 retorno = tabela.verificar(ctx.identificador().getText());

@@ -45,14 +45,14 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
 
         // Verificando se o tipo da variável é 'INVÁLIDO' para retornar mensagem de erro
         if (tipoItem == AlgumaGrammar.INVALIDO)
-            AlgumaSemanticoUtils.adicionarErroSemantico(TipoToken, "tipo " + tipoVariavel + "não declarado");
+            AlgumaSemanticoUtils.adicionarErroSemantico(TipoToken, " tipo " + tipoVariavel + " nao declarado");
         /* Se o tipo da variável não for 'INVÁLIDO', verifica se ela já existe
         Caso não exista: adiciona
         Caso exista: retorna erro semântico, pois já foi declarada */
         else if (!tabelaEscopos.existe(nomeVariavel))
             tabelaEscopos.adicionar(nomeVariavel, tipoItem);
         else
-            AlgumaSemanticoUtils.adicionarErroSemantico(nomeToken, "identificador " + nomeVariavel + "já declarado");
+            AlgumaSemanticoUtils.adicionarErroSemantico(nomeToken, " identificador " + nomeVariavel + " ja declarado");
 
     }
 
@@ -86,15 +86,19 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         return super.visitDeclaracao_local(ctx);
     }
 
+
     @Override
     public Void visitDecl_local_global(AlgumaGrammarParser.Decl_local_globalContext ctx) {
         tabela = escoposAninhados.obterEscopoAtual();
         
         // Identifica se é uma declaração local ou global
-        if (ctx.declaracao_local() != null)
+        if (ctx.declaracao_local() != null){
+            System.out.print("Entrou na local!");    
             visitDeclaracao_local(ctx.declaracao_local());
+        }
         else if (ctx.declaracao_global() != null)
-            visitDeclaracao_global(ctx.declaracao_global());
+            System.out.print("Entrou na global!");    
+        //visitDeclaracao_global(ctx.declaracao_global());
 
         return super.visitDecl_local_global(ctx);
     }
@@ -110,7 +114,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         if (tipoExpressao != AlgumaGrammar.INVALIDO) {
             // Caso a variável não tenha sido declarada, informa o erro
             if (!tabela.existe(nomeVariavel)) {
-                AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "identificador " + ctx.identificador().getText() + " não declarado");
+                AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "identificador " + ctx.identificador().getText() + " nao declarado");
             } else {
                 // Caso tenha sido declarada, verifica os demais casos
                 AlgumaGrammar varTipo = AlgumaSemanticoUtils.verificarTipo(tabela, nomeVariavel);
@@ -124,13 +128,13 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                         // não é possível tratar o valor como um número real, logo, os tipos são incompatíveis, pois
                         // seria a situação de estar comparando um número com um literal, por exemplo.
                         if (tipoExpressao != AlgumaGrammar.INTEIRO) {
-                            AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "atribuição não compativel para " + ctx.identificador().getText());
+                            AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), " atribuicao nao compativel para " + ctx.identificador().getText());
                         }
                     }
                 // Caso a expressão analisada não tenha números que precisem ser tratados de maneira especial,
                 // apenas verifica se os tipos são diferentes.
                 } else if (varTipo != tipoExpressao)
-                    AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "atribuição não compativel para " + ctx.identificador().getText());
+                    AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), " atribuicao nao compativel para " + ctx.identificador().getText());
             }
         }
         
@@ -143,7 +147,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
 
         for (AlgumaGrammarParser.IdentificadorContext id : ctx.identificador())
             if (!tabela.existe(id.getText()))
-                AlgumaSemanticoUtils.adicionarErroSemantico(id.getStart(), "identificador " + id.getText() + " não declarado");
+                AlgumaSemanticoUtils.adicionarErroSemantico(id.getStart(), "identificador " + id.getText() + " nao declarado");
 
         return super.visitCmdLeia(ctx);
     }

@@ -1,0 +1,7 @@
+Erro na linha 7:9 -  tipo inteir nao declarado
+Erro na linha 11:6 - identificador idades nao declarado
+Erro na linha 14:24 - identificador idade nao declarado
+Erro na linha 14:24 - identificador idade nao declarado
+Erro na linha 14:24 - identificador idade nao declarado
+Erro na linha 14:24 - identificador idade nao declarado
+Fim da compilacao
