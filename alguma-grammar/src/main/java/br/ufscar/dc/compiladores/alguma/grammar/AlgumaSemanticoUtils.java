@@ -51,7 +51,7 @@ public class AlgumaSemanticoUtils {
             if (retorno == null) {
                 retorno = aux;
             } else if (retorno != aux && aux != AlgumaGrammar.INVALIDO) {
-                adicionarErroSemantico(ctx.start, "Expressão " + ctx.getText() + " contém tipos incompatíveis");
+                adicionarErroSemantico(ctx.start, "Expressão " + ctx.getText() + " contem tipos incompativeis");
                 retorno = AlgumaGrammar.INVALIDO;
             }
         }
@@ -68,7 +68,7 @@ public class AlgumaSemanticoUtils {
             if (retorno == null) {
                 retorno = aux;
             } else if (retorno != aux && aux != AlgumaGrammar.INVALIDO) {
-                adicionarErroSemantico(ctx.start, "Termo " + ctx.getText() + " contém tipos incompatíveis");
+                adicionarErroSemantico(ctx.start, "Termo " + ctx.getText() + " contem tipos incompativeis");
                 retorno = AlgumaGrammar.INVALIDO;
             }
         }

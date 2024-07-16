@@ -46,7 +46,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         // Verificando se o tipo da variável é 'INVÁLIDO' para retornar mensagem de erro
         if (tipoItem == AlgumaGrammar.INVALIDO){
             tabelaEscopos.adicionar(nomeVariavel, tipoItem);
-            AlgumaSemanticoUtils.adicionarErroSemantico(TipoToken, " tipo " + tipoVariavel + " nao declarado");
+            AlgumaSemanticoUtils.adicionarErroSemantico(TipoToken, "tipo " + tipoVariavel + " nao declarado");
         }
             
         /* Se o tipo da variável não for 'INVÁLIDO', verifica se ela já existe

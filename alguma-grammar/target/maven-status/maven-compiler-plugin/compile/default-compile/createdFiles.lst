@@ -13,7 +13,6 @@ br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarListener.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$Op_logico_2Context.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$ExpressaoContext.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$Parcela_logicaContext.class
-br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammar.interp
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$VariavelContext.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$CmdLeiaContext.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$Fator_logicoContext.class
@@ -24,11 +23,9 @@ br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$ConstantesContext.c
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$CmdChamadaContext.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$Op2Context.class
-AlgumaGrammar.tokens
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$CmdFacaContext.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$Op_relacionalContext.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$IdentificadorContext.class
-AlgumaGrammarLexer.tokens
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarLexer.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$Op_logico_1Context.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$ProgramaContext.class
@@ -42,7 +39,6 @@ br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$SelecaoContext.clas
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$CmdEscrevaContext.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarVisitor.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$Exp_aritmeticaContext.class
-br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarLexer.interp
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$ParametrosContext.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarBaseVisitor.class
 br\ufscar\dc\compiladores\alguma\grammar\AlgumaGrammarParser$CmdParaContext.class
