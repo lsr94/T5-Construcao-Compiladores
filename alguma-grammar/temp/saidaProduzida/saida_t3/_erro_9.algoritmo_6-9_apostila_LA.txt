@@ -6,12 +6,5 @@ Linha 16: identificador preco_final nao declarado
 Linha 16: identificador preco_final nao declarado
 Linha 16: identificador preco_final nao declarado
 Linha 16: identificador preco_final nao declarado
-Linha 19: Termo preco*quantidade contem tipos incompativeis
-Linha 19: Termo preco*quantidade contem tipos incompativeis
-Linha 19: Termo preco*quantidade contem tipos incompativeis
-Linha 19: Termo preco*quantidade contem tipos incompativeis
-Linha 30: Termo 1.0*somaUnitarios/numeroItens contem tipos incompativeis
-Linha 30: Termo 1.0*somaUnitarios/numeroItens contem tipos incompativeis
-Linha 30: Termo 1.0*somaUnitarios/numeroItens contem tipos incompativeis
-Linha 30: Termo 1.0*somaUnitarios/numeroItens contem tipos incompativeis
+Linha 16: identificador preco_final nao declarado
 Fim da compilacao

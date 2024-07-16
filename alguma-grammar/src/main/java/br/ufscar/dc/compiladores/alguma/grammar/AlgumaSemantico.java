@@ -1,6 +1,8 @@
 package br.ufscar.dc.compiladores.alguma.grammar;
 
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.DeclaracoesContext;
+import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.IdentificadorContext;
+import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.Parcela_unarioContext;
 import br.ufscar.dc.compiladores.alguma.grammar.Escopos;
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaSemanticoUtils;
 import br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos;
@@ -55,7 +57,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         else if (!tabelaEscopos.existe(nomeVariavel))
             tabelaEscopos.adicionar(nomeVariavel, tipoItem);
         else
-            AlgumaSemanticoUtils.adicionarErroSemantico(nomeToken, " identificador " + nomeVariavel + " ja declarado");
+            AlgumaSemanticoUtils.adicionarErroSemantico(nomeToken, "identificador " + nomeVariavel + " ja declarado anteriormente");
 
     }
 
@@ -82,7 +84,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
             for (AlgumaGrammarParser.IdentificadorContext ident : ctx.variavel().identificador()) {
                 nomeVariavel = ident.getText();
                 adicionaVariavelTabela(nomeVariavel, tipoVariavel, ident.getStart(), ctx.variavel().tipo().getStart());
-                
+                System.out.println("Adicionou "+nomeVariavel+"?"+tabela.existe(nomeVariavel)+" de tipo "+tabela.verificar(nomeVariavel));
             }
         }
 
@@ -113,7 +115,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         AlgumaGrammar tipoExpressao = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.expressao());
         
         String nomeVariavel = ctx.identificador().getText();
-        
+        //System.out.println("Variavel "+nomeVariavel+ " e tipo da expressão: "+tipoExpressao);
         if (tipoExpressao != AlgumaGrammar.INVALIDO) {
             // Caso a variável não tenha sido declarada, informa o erro
             if (!tabela.existe(nomeVariavel)) {
@@ -156,14 +158,39 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitCmdEscreva(AlgumaGrammarParser.CmdEscrevaContext ctx) {
-        tabela = escoposAninhados.obterEscopoAtual();
+    public Void visitParcela_unario(Parcela_unarioContext ctx) {
+        if(ctx.identificador() != null) {
+            IdentificadorContext idc = ctx.identificador();
+            for(var id: idc.IDENT()) {
+                String nomeVar = id.getText();
+                boolean declarado = false;
+                for(var tabela: escoposAninhados.percorrerEscoposAninhados()) {
+                    if(tabela.existe(nomeVar)) {
+                        declarado = true;
+                    }
+                }
+                if(!declarado) {
+                    AlgumaSemanticoUtils.adicionarErroSemantico(id.getSymbol(), "identificador " + nomeVar + " nao declarado");
+                   
+                }
+            }
+        }
         
-        for (AlgumaGrammarParser.ExpressaoContext expressao : ctx.expressao())
-            AlgumaSemanticoUtils.verificarTipo(tabela, expressao);
-
-        return super.visitCmdEscreva(ctx);
+        // TODO Auto-generated method stub
+        return super.visitParcela_unario(ctx);
     }
+
+    // @Override
+    // public Void visitCmdEscreva(AlgumaGrammarParser.CmdEscrevaContext ctx) {
+    //     tabela = escoposAninhados.obterEscopoAtual();
+        
+        
+    //     for (AlgumaGrammarParser.ExpressaoContext expressao : ctx.expressao())
+
+    //         AlgumaSemanticoUtils.verificarTipo(tabela, expressao);
+
+    //     return super.visitCmdEscreva(ctx);
+    // }
 
     @Override
     public Void visitCmdEnquanto(AlgumaGrammarParser.CmdEnquantoContext ctx) {

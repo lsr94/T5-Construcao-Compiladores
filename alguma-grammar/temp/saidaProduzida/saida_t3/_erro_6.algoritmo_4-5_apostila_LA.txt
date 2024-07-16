@@ -2,7 +2,4 @@ Linha 11: tipo logico nao declarado
 Linha 13:  atribuicao nao compativel para colidiu
 Linha 28:  atribuicao nao compativel para colidiu
 Linha 31: identificador colisao nao declarado
-Linha 31: identificador colisao nao declarado
-Linha 31: identificador colisao nao declarado
-Linha 31: identificador colisao nao declarado
 Fim da compilacao

@@ -47,13 +47,17 @@ public class AlgumaSemanticoUtils {
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.Exp_aritmeticaContext ctx) {
         AlgumaGrammar retorno = null;
         for (var ta : ctx.termo()) {
+
             AlgumaGrammar aux = verificarTipo(tabela, ta);
+
+            //System.out.println("Tabela "+ta+". Tipo: "+verificarTipo(tabela, ta));
             if (retorno == null) {
                 retorno = aux;
             } else if (retorno != aux && aux != AlgumaGrammar.INVALIDO) {
                 adicionarErroSemantico(ctx.start, "Expressão " + ctx.getText() + " contem tipos incompativeis");
                 retorno = AlgumaGrammar.INVALIDO;
             }
+            
         }
 
         return retorno;
@@ -64,13 +68,23 @@ public class AlgumaSemanticoUtils {
         AlgumaGrammar retorno = null;
 
         for (var fa : ctx.fator()) {
+            //System.out.println("Fator "+fa+". Tipo de retorno: "+retorno);
             AlgumaGrammar aux = verificarTipo(tabela, fa);
             if (retorno == null) {
                 retorno = aux;
+                
+                
             } else if (retorno != aux && aux != AlgumaGrammar.INVALIDO) {
-                adicionarErroSemantico(ctx.start, "Termo " + ctx.getText() + " contem tipos incompativeis");
-                retorno = AlgumaGrammar.INVALIDO;
+                if((retorno == AlgumaGrammar.REAL && aux == AlgumaGrammar.INTEIRO) || (retorno == AlgumaGrammar.INTEIRO && aux == AlgumaGrammar.REAL))
+                    retorno = AlgumaGrammar.REAL;
+                
+                else{
+                    adicionarErroSemantico(ctx.start, "Termo " + ctx.getText() + " contem tipos incompativeis");
+                    retorno = AlgumaGrammar.INVALIDO;
+                }
+                
             }
+            //System.out.println("Tipo de retorno: "+retorno);
         }
         return retorno;
     }
@@ -79,9 +93,11 @@ public class AlgumaSemanticoUtils {
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.FatorContext ctx) {
         AlgumaGrammar retorno = null;
 
-        for (var parcela : ctx.parcela())
+        for (var parcela : ctx.parcela()){
             retorno = verificarTipo(tabela, parcela);
-        
+            //System.out.println("Parcela! Retorno: "+retorno);
+            // Caso algum termo da parcela seja inválido, interrompe a verificação
+        }
         return retorno;
     }
 
@@ -110,6 +126,8 @@ public class AlgumaSemanticoUtils {
             else {
                 TabelaDeSimbolos tabelaAux = AlgumaSemantico.escoposAninhados.percorrerEscoposAninhados().get(AlgumaSemantico.escoposAninhados.percorrerEscoposAninhados().size() - 1);
                 if (!tabelaAux.existe(nome)) {
+                    
+                    //System.out.println("Parcela unaria!!"+nome);
                     adicionarErroSemantico(ctx.identificador().getStart(), "identificador " + ctx.identificador().getText() + " nao declarado");
                     retorno = AlgumaGrammar.INVALIDO;
                 } else 
@@ -133,7 +151,7 @@ public class AlgumaSemanticoUtils {
             nome = ctx.identificador().getText();
         
             if (!tabela.existe(nome)) {
-                adicionarErroSemantico(ctx.identificador().getStart(), "identificador " + ctx.identificador().getText() + " nao declarado");
+                //adicionarErroSemantico(ctx.identificador().getStart(), "identificador " + ctx.identificador().getText() + " nao declarado");
                 retorno = AlgumaGrammar.INVALIDO;
             } else 
                 retorno = tabela.verificar(ctx.identificador().getText());
@@ -156,6 +174,7 @@ public class AlgumaSemanticoUtils {
         return retorno;
     }
 
+    // Termo lógico 
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.Termo_logicoContext ctx) {
         AlgumaGrammar retorno = verificarTipo(tabela, ctx.fator_logico(0));
 
@@ -189,10 +208,14 @@ public class AlgumaSemanticoUtils {
         AlgumaGrammar retorno = verificarTipo(tabela, ctx.exp_aritmetica().get(0));
 
         if (ctx.exp_aritmetica().size() > 1) {
+            
+            // Verifica o tipo da expressão aritmética
             AlgumaGrammar tipoAtual = verificarTipo(tabela, ctx.exp_aritmetica().get(1));
 
             // Semelhante ao que foi feito com as expressões aritméticas, ocorre uma verificação
             // para saber se a expressão atual pode ser tratada como uma operação lógica.
+
+            
             if (retorno == tipoAtual || verificaCompatibilidadeLogica(retorno, tipoAtual))
                 retorno = AlgumaGrammar.BOOL;
             else
