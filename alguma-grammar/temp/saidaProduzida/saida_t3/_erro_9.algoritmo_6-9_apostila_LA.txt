@@ -1,7 +1,4 @@
-Linha 11: Expressão 0+"NADA" contem tipos incompativeis
-Linha 11: Expressão 0+"NADA" contem tipos incompativeis
-Linha 11: Expressão 0+"NADA" contem tipos incompativeis
-Linha 11: Expressão 0+"NADA" contem tipos incompativeis
+Linha 11: atribuicao nao compativel para valorTotal
 Linha 16: identificador preco_final nao declarado
 Linha 16: identificador preco_final nao declarado
 Linha 16: identificador preco_final nao declarado

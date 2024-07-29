@@ -51,12 +51,10 @@ public class AlgumaSemanticoUtils {
             AlgumaGrammar aux = verificarTipo(tabela, ta);
 
             //System.out.println("Tabela "+ta+". Tipo: "+verificarTipo(tabela, ta));
-            if (retorno == null) {
+            if ((verificaCompatibilidade(aux, retorno)) && (aux != AlgumaGrammar.INVALIDO))
+                retorno = AlgumaGrammar.REAL;
+            else
                 retorno = aux;
-            } else if (retorno != aux && aux != AlgumaGrammar.INVALIDO) {
-                adicionarErroSemantico(ctx.start, "Expressão " + ctx.getText() + " contem tipos incompativeis");
-                retorno = AlgumaGrammar.INVALIDO;
-            }
             
         }
 
@@ -126,8 +124,7 @@ public class AlgumaSemanticoUtils {
             else {
                 TabelaDeSimbolos tabelaAux = AlgumaSemantico.escoposAninhados.percorrerEscoposAninhados().get(AlgumaSemantico.escoposAninhados.percorrerEscoposAninhados().size() - 1);
                 if (!tabelaAux.existe(nome)) {
-                    
-                    //System.out.println("Parcela unaria!!"+nome);
+                    // System.out.println("Parcela unaria!!"+nome);
                     adicionarErroSemantico(ctx.identificador().getStart(), "identificador " + ctx.identificador().getText() + " nao declarado");
                     retorno = AlgumaGrammar.INVALIDO;
                 } else 
@@ -198,7 +195,7 @@ public class AlgumaSemanticoUtils {
         if (ctx.exp_relacional() != null)
             retorno = verificarTipo(tabela, ctx.exp_relacional());
          else
-            retorno = AlgumaGrammar.BOOL;
+            retorno = AlgumaGrammar.LOGICO;
 
         return retorno;
 
@@ -217,7 +214,7 @@ public class AlgumaSemanticoUtils {
 
             
             if (retorno == tipoAtual || verificaCompatibilidadeLogica(retorno, tipoAtual))
-                retorno = AlgumaGrammar.BOOL;
+                retorno = AlgumaGrammar.LOGICO;
             else
                 retorno = AlgumaGrammar.INVALIDO;
         }

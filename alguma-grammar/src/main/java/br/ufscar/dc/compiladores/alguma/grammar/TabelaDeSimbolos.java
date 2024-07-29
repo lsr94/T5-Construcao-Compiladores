@@ -7,9 +7,9 @@ public class TabelaDeSimbolos {
     public enum AlgumaGrammar {
         INTEIRO,
         REAL,
-        INVALIDO,
         LITERAL,
-        BOOL
+        LOGICO,
+        INVALIDO
     }
 
     class EntradaTabelaDeSimbolos {

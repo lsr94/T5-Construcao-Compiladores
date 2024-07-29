@@ -38,8 +38,9 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
             case "real":
                 tipoItem = AlgumaGrammar.REAL;
                 break;
-            case "booleano":
-                tipoItem = AlgumaGrammar.BOOL;
+            case "logico":
+                tipoItem = AlgumaGrammar.LOGICO;
+                break;
             default:
                 tipoItem = AlgumaGrammar.INVALIDO;
                 break;
@@ -115,7 +116,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         AlgumaGrammar tipoExpressao = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.expressao());
         
         String nomeVariavel = ctx.identificador().getText();
-        //System.out.println("Variavel "+nomeVariavel+ " e tipo da expressão: "+tipoExpressao);
+        System.out.println("Variavel "+nomeVariavel+ " e tipo da expressão: "+tipoExpressao);
         if (tipoExpressao != AlgumaGrammar.INVALIDO) {
             // Caso a variável não tenha sido declarada, informa o erro
             if (!tabela.existe(nomeVariavel)) {
@@ -123,23 +124,15 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
             } else {
                 // Caso tenha sido declarada, verifica os demais casos
                 AlgumaGrammar varTipo = AlgumaSemanticoUtils.verificarTipo(tabela, nomeVariavel);
-                
-                // Caso o tipo seja inteiro ou real, é utilizada a função verificaCompatibilidade para verificar
-                // se o valor a ser trabalhado é real ou não (mais informações sobre a função podem ser encontradas
-                // no arquivo T3SemanticoUtils.java.
+
                 if (varTipo == AlgumaGrammar.INTEIRO || varTipo == AlgumaGrammar.REAL) {
                     if (!AlgumaSemanticoUtils.verificaCompatibilidade(varTipo, tipoExpressao)) {
-                        // Caso o tipo da expressão (restante da parcela sendo analisada) seja diferente de inteiro,
-                        // não é possível tratar o valor como um número real, logo, os tipos são incompatíveis, pois
-                        // seria a situação de estar comparando um número com um literal, por exemplo.
                         if (tipoExpressao != AlgumaGrammar.INTEIRO) {
-                            AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), " atribuicao nao compativel para " + ctx.identificador().getText());
+                            AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "atribuicao nao compativel para " + ctx.identificador().getText());
                         }
                     }
-                // Caso a expressão analisada não tenha números que precisem ser tratados de maneira especial,
-                // apenas verifica se os tipos são diferentes.
                 } else if (varTipo != tipoExpressao)
-                    AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), " atribuicao nao compativel para " + ctx.identificador().getText());
+                    AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "atribuicao nao compativel para " + ctx.identificador().getText());
             }
         }
         
@@ -171,7 +164,6 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                 }
                 if(!declarado) {
                     AlgumaSemanticoUtils.adicionarErroSemantico(id.getSymbol(), "identificador " + nomeVar + " nao declarado");
-                   
                 }
             }
         }
@@ -179,18 +171,6 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         // TODO Auto-generated method stub
         return super.visitParcela_unario(ctx);
     }
-
-    // @Override
-    // public Void visitCmdEscreva(AlgumaGrammarParser.CmdEscrevaContext ctx) {
-    //     tabela = escoposAninhados.obterEscopoAtual();
-        
-        
-    //     for (AlgumaGrammarParser.ExpressaoContext expressao : ctx.expressao())
-
-    //         AlgumaSemanticoUtils.verificarTipo(tabela, expressao);
-
-    //     return super.visitCmdEscreva(ctx);
-    // }
 
     @Override
     public Void visitCmdEnquanto(AlgumaGrammarParser.CmdEnquantoContext ctx) {
