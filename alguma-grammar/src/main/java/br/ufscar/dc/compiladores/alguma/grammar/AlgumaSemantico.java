@@ -13,7 +13,6 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
     TabelaDeSimbolos tabela;
     
     static Escopos escoposAninhados = new Escopos();
-
     TabelaDeSimbolos tabelaEscopos;
 
     @Override
@@ -23,6 +22,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         return super.visitPrograma(ctx);
     }
 
+    // Adiciona variável e seu tipo na tabela de símbolos
     public void adicionaVariavelTabela(String nomeVariavel, String tipoVariavel, Token nomeToken, Token TipoToken) {
         tabelaEscopos = escoposAninhados.obterEscopoAtual();
 
@@ -62,6 +62,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
 
     }
 
+    // Visita as declarações
     @Override
     public Void visitDeclaracoes(AlgumaGrammarParser.DeclaracoesContext ctx) {
         tabela = escoposAninhados.obterEscopoAtual();
@@ -72,6 +73,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         return super.visitDeclaracoes(ctx);
     }
 
+    // Visita as declarações locais
     @Override
     public Void visitDeclaracao_local(AlgumaGrammarParser.Declaracao_localContext ctx) {
         tabela = escoposAninhados.obterEscopoAtual();
@@ -85,7 +87,6 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
             for (AlgumaGrammarParser.IdentificadorContext ident : ctx.variavel().identificador()) {
                 nomeVariavel = ident.getText();
                 adicionaVariavelTabela(nomeVariavel, tipoVariavel, ident.getStart(), ctx.variavel().tipo().getStart());
-                System.out.println("Adicionou "+nomeVariavel+"?"+tabela.existe(nomeVariavel)+" de tipo "+tabela.verificar(nomeVariavel));
             }
         }
 
@@ -93,22 +94,22 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
     }
 
 
+    
     @Override
     public Void visitDecl_local_global(AlgumaGrammarParser.Decl_local_globalContext ctx) {
         tabela = escoposAninhados.obterEscopoAtual();
         
         // Identifica se é uma declaração local ou global
         if (ctx.declaracao_local() != null){
-            System.out.println("Entrou na local!");    
             visitDeclaracao_local(ctx.declaracao_local());
         }
         else if (ctx.declaracao_global() != null)
-            System.out.println("Entrou na global!");    
-        //visitDeclaracao_global(ctx.declaracao_global());
+            visitDeclaracao_global(ctx.declaracao_global());
 
         return super.visitDecl_local_global(ctx);
     }
 
+    // Visita atribuições
     @Override
     public Void visitCmdAtribuicao(AlgumaGrammarParser.CmdAtribuicaoContext ctx) {
         tabela = escoposAninhados.obterEscopoAtual();
@@ -116,7 +117,6 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         AlgumaGrammar tipoExpressao = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.expressao());
         
         String nomeVariavel = ctx.identificador().getText();
-        System.out.println("Variavel "+nomeVariavel+ " e tipo da expressão: "+tipoExpressao);
         if (tipoExpressao != AlgumaGrammar.INVALIDO) {
             // Caso a variável não tenha sido declarada, informa o erro
             if (!tabela.existe(nomeVariavel)) {
@@ -139,6 +139,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         return super.visitCmdAtribuicao(ctx);
     }
 
+    // Visita comandos de leitura
     @Override
     public Void visitCmdLeia(AlgumaGrammarParser.CmdLeiaContext ctx) {
         tabela = escoposAninhados.obterEscopoAtual();
@@ -150,6 +151,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         return super.visitCmdLeia(ctx);
     }
 
+    // Visita parcelas unárias  
     @Override
     public Void visitParcela_unario(Parcela_unarioContext ctx) {
         if(ctx.identificador() != null) {
@@ -168,7 +170,6 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
             }
         }
         
-        // TODO Auto-generated method stub
         return super.visitParcela_unario(ctx);
     }
 

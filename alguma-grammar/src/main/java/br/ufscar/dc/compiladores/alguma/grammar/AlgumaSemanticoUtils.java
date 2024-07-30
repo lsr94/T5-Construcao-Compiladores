@@ -50,7 +50,6 @@ public class AlgumaSemanticoUtils {
 
             AlgumaGrammar aux = verificarTipo(tabela, ta);
 
-            //System.out.println("Tabela "+ta+". Tipo: "+verificarTipo(tabela, ta));
             if ((verificaCompatibilidade(aux, retorno)) && (aux != AlgumaGrammar.INVALIDO))
                 retorno = AlgumaGrammar.REAL;
             else
@@ -66,23 +65,22 @@ public class AlgumaSemanticoUtils {
         AlgumaGrammar retorno = null;
 
         for (var fa : ctx.fator()) {
-            //System.out.println("Fator "+fa+". Tipo de retorno: "+retorno);
             AlgumaGrammar aux = verificarTipo(tabela, fa);
             if (retorno == null) {
                 retorno = aux;
                 
-                
+            // Verifica se a variável de retorno já não é igual à auxiliar e se a variável auxiliar não é inválida   
             } else if (retorno != aux && aux != AlgumaGrammar.INVALIDO) {
+                // Se uma das variáveis tem tipo real e outra tem tipo inteiro, o retorno será de tipo inteiro
                 if((retorno == AlgumaGrammar.REAL && aux == AlgumaGrammar.INTEIRO) || (retorno == AlgumaGrammar.INTEIRO && aux == AlgumaGrammar.REAL))
                     retorno = AlgumaGrammar.REAL;
-                
+                // Caso contrário, os tipos são incompatíveis
                 else{
                     adicionarErroSemantico(ctx.start, "Termo " + ctx.getText() + " contem tipos incompativeis");
                     retorno = AlgumaGrammar.INVALIDO;
                 }
                 
             }
-            //System.out.println("Tipo de retorno: "+retorno);
         }
         return retorno;
     }
@@ -93,12 +91,12 @@ public class AlgumaSemanticoUtils {
 
         for (var parcela : ctx.parcela()){
             retorno = verificarTipo(tabela, parcela);
-            //System.out.println("Parcela! Retorno: "+retorno);
             // Caso algum termo da parcela seja inválido, interrompe a verificação
         }
         return retorno;
     }
 
+    // Vreificação de tipo de Parcela
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.ParcelaContext ctx) {
         // Identifica se é uma parcela unária ou não unária
         if (ctx.parcela_unario() != null)
@@ -107,6 +105,7 @@ public class AlgumaSemanticoUtils {
             return verificarTipo(tabela, ctx.parcela_nao_unario());
     }
     
+    // Verificação do tipo de Parcela Unária
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.Parcela_unarioContext ctx) {
         AlgumaGrammar retorno;
         String nome;
@@ -118,14 +117,10 @@ public class AlgumaSemanticoUtils {
             // Se o identificador (variável) já tiver sido declarado, apenas retorna seu tipo
             if (tabela.existe(nome))
                 retorno = tabela.verificar(nome);
-            /* Se não tiver sido declarado: utiliza uma tabela auxiliar para realizar a verificação
-            Se não tiver sido declarado, utiliza o método adicionaErroSemantico para verificar se o erro já foi
-            exibido e, caso ainda não tenha sido, adiciona-o à lista */ 
+            /* Percorre os escopos aninhados em busca da variável e retorna o tipo. Caso não exista em nenhum deles, retorna o tipo inválido*/
             else {
                 TabelaDeSimbolos tabelaAux = AlgumaSemantico.escoposAninhados.percorrerEscoposAninhados().get(AlgumaSemantico.escoposAninhados.percorrerEscoposAninhados().size() - 1);
                 if (!tabelaAux.existe(nome)) {
-                    // System.out.println("Parcela unaria!!"+nome);
-                    adicionarErroSemantico(ctx.identificador().getStart(), "identificador " + ctx.identificador().getText() + " nao declarado");
                     retorno = AlgumaGrammar.INVALIDO;
                 } else 
                     retorno = tabelaAux.verificar(nome);
@@ -140,17 +135,19 @@ public class AlgumaSemanticoUtils {
         return retorno;
     }
 
+    // Verifica o tipo de Parcelas Não Unárias
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.Parcela_nao_unarioContext ctx) {
         AlgumaGrammar retorno;
         String nome;
 
+        
         if (ctx.identificador() != null) {
             nome = ctx.identificador().getText();
-        
+            // Verifica se o identificador existe na tabela de símbolos e retorna o tipo
             if (!tabela.existe(nome)) {
-                //adicionarErroSemantico(ctx.identificador().getStart(), "identificador " + ctx.identificador().getText() + " nao declarado");
                 retorno = AlgumaGrammar.INVALIDO;
-            } else 
+            } 
+            else 
                 retorno = tabela.verificar(ctx.identificador().getText());
         } else
             retorno = AlgumaGrammar.LITERAL;
@@ -158,6 +155,7 @@ public class AlgumaSemanticoUtils {
         return retorno;
     }
 
+    // Verifica o tipo de Expressões
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.ExpressaoContext ctx) {
         AlgumaGrammar retorno = verificarTipo(tabela, ctx.termo_logico(0));
 
@@ -171,7 +169,7 @@ public class AlgumaSemanticoUtils {
         return retorno;
     }
 
-    // Termo lógico 
+    // Verifica o tipo de Termo lógico 
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.Termo_logicoContext ctx) {
         AlgumaGrammar retorno = verificarTipo(tabela, ctx.fator_logico(0));
 
@@ -183,12 +181,13 @@ public class AlgumaSemanticoUtils {
         return retorno;
     }
 
+    // Verifica o tipo de Fator lógico
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.Fator_logicoContext ctx) {
         AlgumaGrammar retorno = verificarTipo(tabela, ctx.parcela_logica());
         return retorno;
 
     }
-
+    // Verifica o tipo de Parcela lógica
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.Parcela_logicaContext ctx) {
         AlgumaGrammar retorno;
 
@@ -200,7 +199,7 @@ public class AlgumaSemanticoUtils {
         return retorno;
 
     }
-
+    // Verifica o tipo de Expressão Relacional
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.Exp_relacionalContext ctx) {
         AlgumaGrammar retorno = verificarTipo(tabela, ctx.exp_aritmetica().get(0));
 
@@ -211,8 +210,6 @@ public class AlgumaSemanticoUtils {
 
             // Semelhante ao que foi feito com as expressões aritméticas, ocorre uma verificação
             // para saber se a expressão atual pode ser tratada como uma operação lógica.
-
-            
             if (retorno == tipoAtual || verificaCompatibilidadeLogica(retorno, tipoAtual))
                 retorno = AlgumaGrammar.LOGICO;
             else
@@ -223,6 +220,7 @@ public class AlgumaSemanticoUtils {
 
     }
 
+    // Verifica o tipo da variável na tabela de símbolos
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, String nomeVar) {
         return tabela.verificar(nomeVar);
     }
