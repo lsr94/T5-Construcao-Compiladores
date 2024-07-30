@@ -9,16 +9,18 @@ public class TabelaDeSimbolos {
         REAL,
         LITERAL,
         LOGICO,
-        INVALIDO
+        INVALIDO,
     }
 
     class EntradaTabelaDeSimbolos {
         String nome;
         AlgumaGrammar tipo;
+        boolean flag_ponteiro = 0;
 
-        private EntradaTabelaDeSimbolos(String nome, AlgumaGrammar tipo) {
+        private EntradaTabelaDeSimbolos(String nome, AlgumaGrammar tipo, boolean flag_ponteiro) {
             this.nome = nome;
             this.tipo = tipo;
+            this.flag_ponteiro = flag_ponteiro;
         }
     }
 
@@ -38,6 +40,10 @@ public class TabelaDeSimbolos {
     
     public AlgumaGrammar verificar(String nome) {
         return tabela.get(nome).tipo;
+    }
+
+    public boolean verificar_ponteiro(String nome) {
+        return tabela.get(nome).flag_ponteiro;
     }
 
 }
