@@ -27,6 +27,14 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         tabelaEscopos = escoposAninhados.obterEscopoAtual();
 
         AlgumaGrammar tipoItem;
+        boolean flagPonteiro = false;
+
+        // Checa se o tipo da variável inicia com ^, identificando um ponteiro
+        if (tipoVariavel.startsWith("^")) {
+            // Caso sim, define a flag de ponteiro como verdadeira e remove o caractere ^ do tipo
+            flagPonteiro = true;
+            tipoVariavel = tipoVariavel.substring(1);  // Remove the '^' to get the base type
+        }
 
         switch (tipoVariavel) {
             case "literal":
@@ -45,10 +53,9 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                 tipoItem = AlgumaGrammar.INVALIDO;
                 break;
         }
-
         // Verificando se o tipo da variável é 'INVÁLIDO' para retornar mensagem de erro
         if (tipoItem == AlgumaGrammar.INVALIDO){
-            tabelaEscopos.adicionar(nomeVariavel, tipoItem);
+            tabelaEscopos.adicionar(nomeVariavel, tipoItem, flagPonteiro);
             AlgumaSemanticoUtils.adicionarErroSemantico(TipoToken, "tipo " + tipoVariavel + " nao declarado");
         }
             
@@ -56,7 +63,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         Caso não exista: adiciona
         Caso exista: retorna erro semântico, pois já foi declarada */
         else if (!tabelaEscopos.existe(nomeVariavel))
-            tabelaEscopos.adicionar(nomeVariavel, tipoItem);
+            tabelaEscopos.adicionar(nomeVariavel, tipoItem, flagPonteiro);
         else
             AlgumaSemanticoUtils.adicionarErroSemantico(nomeToken, "identificador " + nomeVariavel + " ja declarado anteriormente");
 
@@ -113,26 +120,26 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
     @Override
     public Void visitCmdAtribuicao(AlgumaGrammarParser.CmdAtribuicaoContext ctx) {
         tabela = escoposAninhados.obterEscopoAtual();
-        
         AlgumaGrammar tipoExpressao = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.expressao());
-        
         String nomeVariavel = ctx.identificador().getText();
+
         if (tipoExpressao != AlgumaGrammar.INVALIDO) {
             // Caso a variável não tenha sido declarada, informa o erro
             if (!tabela.existe(nomeVariavel)) {
                 AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "identificador " + ctx.identificador().getText() + " nao declarado");
             } else {
                 // Caso tenha sido declarada, verifica os demais casos
-                AlgumaGrammar varTipo = AlgumaSemanticoUtils.verificarTipo(tabela, nomeVariavel);
-
-                if (varTipo == AlgumaGrammar.INTEIRO || varTipo == AlgumaGrammar.REAL) {
+                AlgumaGrammar varTipo = tabela.verificar(nomeVariavel);
+                boolean isPointerVar = tabela.verificar_ponteiro(nomeVariavel);
+                boolean isPointerExpr = tabela.verificar_ponteiro(ctx.expressao().getText());  
+                
+                if (isPointerVar != isPointerExpr) {
+                    AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "tipo de atribuicao incompativel para " + nomeVariavel);
+                } else if (varTipo != tipoExpressao) {
                     if (!AlgumaSemanticoUtils.verificaCompatibilidade(varTipo, tipoExpressao)) {
-                        if (tipoExpressao != AlgumaGrammar.INTEIRO) {
-                            AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "atribuicao nao compativel para " + ctx.identificador().getText());
-                        }
+                        AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "atribuicao nao compativel para " + nomeVariavel);
                     }
-                } else if (varTipo != tipoExpressao)
-                    AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "atribuicao nao compativel para " + ctx.identificador().getText());
+                }
             }
         }
         

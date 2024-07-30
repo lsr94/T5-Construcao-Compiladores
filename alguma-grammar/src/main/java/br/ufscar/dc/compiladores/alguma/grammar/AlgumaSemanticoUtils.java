@@ -18,19 +18,32 @@ public class AlgumaSemanticoUtils {
     /*Método auxiliar que verifica a compatibilidade entre operadores aritméticos
     Caso a operação envolva pelo menos um valor real, a operação deve ser tratada
     como uma operação entre números reais, mesmo que um deles seja um inteiro */
+    // public static boolean verificaCompatibilidade(AlgumaGrammar T1, AlgumaGrammar T2, boolean flag_ponteiro_t1, boolean flag_ponteiro_t2) {
+    //     boolean flag = false;
+    //     if (flag_ponteiro_t1 == flag_ponteiro_t2){
+    //         flag = true;
+    //         if (T1==T2)
+    //             flag = true;
+    //         else if ((T1 == AlgumaGrammar.INTEIRO && T2 == AlgumaGrammar.REAL)||(T1 == AlgumaGrammar.REAL && T2 == AlgumaGrammar.INTEIRO))
+    //             flag = true;
+    //         else
+    //             flag = false;
+    //     } else 
+    //         flag = false;
+    //     return flag;
+    // }
+    
     public static boolean verificaCompatibilidade(AlgumaGrammar T1, AlgumaGrammar T2) {
         boolean flag = false;
         
-        if (T1 == AlgumaGrammar.INTEIRO && T2 == AlgumaGrammar.REAL)
+        if (T1==T2)
             flag = true;
-        else if (T1 == AlgumaGrammar.REAL && T2 == AlgumaGrammar.INTEIRO)
+        else if ((T1 == AlgumaGrammar.INTEIRO && T2 == AlgumaGrammar.REAL)||(T1 == AlgumaGrammar.REAL && T2 == AlgumaGrammar.INTEIRO))
             flag = true;
-        else if (T1 == AlgumaGrammar.REAL && T2 == AlgumaGrammar.REAL)
-            flag = true;
-        
         return flag;
     }
     
+
     // Método auxiliar que verifica a compatibilidade entre operadores aritméticos para tratá-los como uma operação lógica
     public static boolean verificaCompatibilidadeLogica(AlgumaGrammar T1, AlgumaGrammar T2) {
         boolean flag = false;

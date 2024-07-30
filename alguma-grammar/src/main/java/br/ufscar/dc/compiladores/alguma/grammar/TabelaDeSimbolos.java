@@ -8,6 +8,8 @@ public class TabelaDeSimbolos {
         INTEIRO,
         REAL,
         LITERAL,
+        VOID,
+        REGISTRO,
         LOGICO,
         INVALIDO,
     }
@@ -15,7 +17,7 @@ public class TabelaDeSimbolos {
     class EntradaTabelaDeSimbolos {
         String nome;
         AlgumaGrammar tipo;
-        boolean flag_ponteiro = 0;
+        boolean flag_ponteiro = false;
 
         private EntradaTabelaDeSimbolos(String nome, AlgumaGrammar tipo, boolean flag_ponteiro) {
             this.nome = nome;
@@ -30,8 +32,8 @@ public class TabelaDeSimbolos {
         this.tabela = new HashMap<>();
     }
     
-    public void adicionar(String nome, AlgumaGrammar tipo) {
-        tabela.put(nome, new EntradaTabelaDeSimbolos(nome, tipo));
+    public void adicionar(String nome, AlgumaGrammar tipo, boolean flag_ponteir) {
+        tabela.put(nome, new EntradaTabelaDeSimbolos(nome, tipo, flag_ponteir));
     }
     
     public boolean existe(String nome) {
