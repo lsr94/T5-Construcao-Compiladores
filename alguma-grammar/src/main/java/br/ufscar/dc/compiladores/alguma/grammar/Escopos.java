@@ -6,7 +6,7 @@ import java.util.List;
 public class Escopos {
 
     private LinkedList<TabelaDeSimbolos> pilhaDeTabelas;
-    
+
     public Escopos() {
         pilhaDeTabelas = new LinkedList<>();
         criarNovoEscopo();

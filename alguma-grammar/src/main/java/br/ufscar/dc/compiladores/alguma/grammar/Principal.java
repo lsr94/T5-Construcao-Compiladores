@@ -5,6 +5,7 @@ Desenvolvido por:
 - Letícia Bossatto Marchezi, 791003
 */
 package br.ufscar.dc.compiladores.alguma.grammar;
+
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.ProgramaContext;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -14,10 +15,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Principal {
-    
+
     // Criação de buffer para armazenar a saída
     private static StringBuilder buffer = new StringBuilder();
-    
+
     public static void main(String args[]) throws IOException {
         // Validação da quantidade de argumentos
         if (args.length < 2) {
@@ -38,8 +39,8 @@ public class Principal {
             AlgumaSemantico as = new AlgumaSemantico();
             as.visitPrograma(arvore);
             AlgumaSemanticoUtils.errosSemanticos.forEach((s) -> System.out.println(s));
-            AlgumaSemanticoUtils.errosSemanticos.forEach((s) -> buffer.append(s+"\n"));
-            
+            AlgumaSemanticoUtils.errosSemanticos.forEach((s) -> buffer.append(s + "\n"));
+
         } catch (Exception ex) {
             // Detecção de exceções
             System.err.println("Erro: " + ex.getMessage());
@@ -52,6 +53,7 @@ public class Principal {
 
     /**
      * Cria o(s) diretório(s) pai do arquivo dado caso não exista(m).
+     * 
      * @param filePath caminho do arquivo a ter os diretórios pai criados.
      */
     private static void createOutputDirectory(String filePath) {
@@ -65,15 +67,18 @@ public class Principal {
 
     /**
      * Escreve o conteúdo do buffer no arquivo destino.
-     * Garante que os recursos serão liberados após o procedimento ao usar try-with-resources, além
-     * da detecção de exceções ao escrever no arquivo, além de imprimir o erro no terminal.
+     * Garante que os recursos serão liberados após o procedimento ao usar
+     * try-with-resources, além
+     * da detecção de exceções ao escrever no arquivo, além de imprimir o erro no
+     * terminal.
+     * 
      * @param filePath caminho do arquivo de saída a ser escrito.
      */
     private static void writeOutputToFile(String filePath) {
         try (FileWriter writer = new FileWriter(filePath)) {
             writer.write(buffer.toString());
         } catch (Exception e) {
-            System.err.println("Erro " + e.getMessage()+" ao escrever no arquivo "+filePath);
+            System.err.println("Erro " + e.getMessage() + " ao escrever no arquivo " + filePath);
         }
     }
 }
