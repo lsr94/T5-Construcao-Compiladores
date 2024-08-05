@@ -42,15 +42,15 @@ public class AlgumaSemanticoUtils {
 
         if (T1 == T2)
             flag = true;
-        else if ((T1 == AlgumaGrammar.INTEIRO && T2 == AlgumaGrammar.REAL)
-                || (T1 == AlgumaGrammar.REAL && T2 == AlgumaGrammar.INTEIRO))
+        else if ((T1 == AlgumaGrammar.INTEIRO && T2 == AlgumaGrammar.REAL) || (T1 == AlgumaGrammar.REAL && T2 == AlgumaGrammar.INTEIRO))
             flag = true;
         return flag;
     }
 
+    // ############## ACHO QUE PODE APAGAR, POIS É IGUAL O DE CIMA ##############
     // Método auxiliar que verifica a compatibilidade entre operadores aritméticos
     // para tratá-los como uma operação lógica
-    public static boolean verificaCompatibilidadeLogica(AlgumaGrammar T1, AlgumaGrammar T2) {
+    /*public static boolean verificaCompatibilidadeLogica(AlgumaGrammar T1, AlgumaGrammar T2) {
         boolean flag = false;
 
         if (T1 == AlgumaGrammar.INTEIRO && T2 == AlgumaGrammar.REAL)
@@ -59,7 +59,7 @@ public class AlgumaSemanticoUtils {
             flag = true;
 
         return flag;
-    }
+    }*/
 
     // Verifica os tipos das Expressões Aritméticas
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.Exp_aritmeticaContext ctx) {
@@ -239,7 +239,7 @@ public class AlgumaSemanticoUtils {
             // Semelhante ao que foi feito com as expressões aritméticas, ocorre uma
             // verificação
             // para saber se a expressão atual pode ser tratada como uma operação lógica.
-            if (retorno == tipoAtual || verificaCompatibilidadeLogica(retorno, tipoAtual))
+            if (retorno == tipoAtual || verificaCompatibilidade(retorno, tipoAtual))
                 retorno = AlgumaGrammar.LOGICO;
             else
                 retorno = AlgumaGrammar.INVALIDO;

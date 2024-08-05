@@ -7,13 +7,24 @@ import br.ufscar.dc.compiladores.alguma.grammar.Escopos;
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaSemanticoUtils;
 import br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos;
 import br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos.AlgumaGrammar;
+import br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos.TipoEntrada;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.antlr.v4.runtime.Token;
 
 public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
     TabelaDeSimbolos tabela;
+    TabelaDeSimbolos tabelaEscopos;
 
     static Escopos escoposAninhados = new Escopos();
-    TabelaDeSimbolos tabelaEscopos;
+
+    // Criação de uma tabela que armazenará as variáveis referentes a um registro
+    HashMap<String, ArrayList<String>> tabelaRegistro = new HashMap<>();
+
+    // Criação de uma tabela que armazenará os nomes e parâmetros das funções e procedimentos
+    static HashMap<String, ArrayList<AlgumaGrammar>> tabelaFuncaoProcedimento = new HashMap<>();
 
     @Override
     public Void visitPrograma(AlgumaGrammarParser.ProgramaContext ctx) {
@@ -23,7 +34,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
     }
 
     // Adiciona variável e seu tipo na tabela de símbolos
-    public void adicionaVariavelTabela(String nomeVariavel, String tipoVariavel, Token nomeToken, Token TipoToken) {
+    public void adicionaVariavelTabela(String nomeVariavel, String tipoVariavel, Token nomeToken, Token TipoToken, TipoEntrada tipoEnt) {
         tabelaEscopos = escoposAninhados.obterEscopoAtual();
 
         AlgumaGrammar tipoItem;
@@ -31,10 +42,9 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
 
         // Checa se o tipo da variável inicia com ^, identificando um ponteiro
         if (tipoVariavel.startsWith("^")) {
-            // Caso sim, define a flag de ponteiro como verdadeira e remove o caractere ^ do
-            // tipo
+            // Caso sim, define a flag de ponteiro como verdadeira e remove o caractere ^ do tipo
             flagPonteiro = true;
-            tipoVariavel = tipoVariavel.substring(1); // Remove the '^' to get the base type
+            tipoVariavel = tipoVariavel.substring(1); 
         }
 
         switch (tipoVariavel) {
@@ -54,9 +64,10 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                 tipoItem = AlgumaGrammar.INVALIDO;
                 break;
         }
+
         // Verificando se o tipo da variável é 'INVÁLIDO' para retornar mensagem de erro
         if (tipoItem == AlgumaGrammar.INVALIDO) {
-            tabelaEscopos.adicionar(nomeVariavel, tipoItem, flagPonteiro);
+            tabelaEscopos.adicionar(nomeVariavel, tipoItem, tipoEnt, flagPonteiro);
             AlgumaSemanticoUtils.adicionarErroSemantico(TipoToken, "tipo " + tipoVariavel + " nao declarado");
         }
 
@@ -66,10 +77,9 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
          * Caso exista: retorna erro semântico, pois já foi declarada
          */
         else if (!tabelaEscopos.existe(nomeVariavel))
-            tabelaEscopos.adicionar(nomeVariavel, tipoItem, flagPonteiro);
+            tabelaEscopos.adicionar(nomeVariavel, tipoItem, tipoEnt, flagPonteiro);
         else
-            AlgumaSemanticoUtils.adicionarErroSemantico(nomeToken,
-                    "identificador " + nomeVariavel + " ja declarado anteriormente");
+            AlgumaSemanticoUtils.adicionarErroSemantico(nomeToken, "identificador " + nomeVariavel + " ja declarado anteriormente");
 
     }
 
@@ -93,14 +103,67 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         String nomeVariavel;
 
         if (ctx.getText().contains("declare")) {
-            tipoVariavel = ctx.variavel().tipo().getText();
-            // Adiciona a variável atual na tabela (a verificação de variável repetida
-            // ocorre no método adicionaVariavelTabela)
-            for (AlgumaGrammarParser.IdentificadorContext ident : ctx.variavel().identificador()) {
-                nomeVariavel = ident.getText();
-                adicionaVariavelTabela(nomeVariavel, tipoVariavel, ident.getStart(), ctx.variavel().tipo().getStart());
+            // Caso 1: a declaração é um registro
+            if (ctx.variavel().tipo().registro() != null) {
+                for (AlgumaGrammarParser.IdentificadorContext ident : ctx.variavel().identificador()) {
+                    adicionaVariavelTabela(ident.getText(), "registro", ident.getStart(), ctx.tipo().getStart(), TipoEntrada.VARIAVEL);    
+
+                    for (AlgumaGrammarParser.VariavelContext vc : ctx.variavel().tipo().registro().variavel()) {
+                        tipoVariavel = ident.getText();
+
+                        for (AlgumaGrammarParser.IdentificadorContext identc : vc.identificador())
+                            adicionaVariavelTabela(ident.getText() + "." + identc.getText(), tipoVariavel, identc.getStart(), vc.tipo().getStart(), TipoEntrada.VARIAVEL);
+                    }
+                }
+            } else { // Caso 2: o tipo já foi declarado
+                tipoVariavel = ctx.variavel().tipo().getText();
+                // Caso 2.1: verifica se é um registro já declarado
+                if (tabelaRegistro.containsKey(tipoVariavel)) {
+                    ArrayList<String> variavelRegistro = tabelaRegistro.get(tipoVariavel);
+
+                    for (AlgumaGrammarParser.IdentificadorContext ic: ctx.variavel().identificador()) {
+                        nomeVariavel = ic.IDENT().get(0).getText();
+
+                        if (tabela.existe(nomeVariavel) || tabelaRegistro.containsKey(nomeVariavel)) 
+                            AlgumaSemanticoUtils.adicionarErroSemantico(ic.getStart(), "identificador " + nomeVariavel + " ja declarado anteriormente");
+                            else {
+                            adicionaVariavelTabela(nomeVariavel, "registro", ic.getStart(), ctx.variavel().tipo().getStart(), TipoEntrada.VARIAVEL);
+
+                            for (int i = 0; i < variavelRegistro.size(); i = i + 2)
+                                adicionaVariavelTabela(nomeVariavel + "." + variavelRegistro.get(i), variavelRegistro.get(i+1), ic.getStart(), ctx.variavel().tipo().getStart(), TipoEntrada.VARIAVEL);
+                        }
+                    }
+                } else { // Caso 2.2: verifica se é um tipo básico já declarado
+                    for (AlgumaGrammarParser.IdentificadorContext identc : ctx.variavel().identificador()) {
+                        nomeVariavel = identc.getText();
+
+                        // Verifica se pode ser uma função ou procedimento
+                        if (tabelaFuncaoProcedimento.containsKey(nomeVariavel))
+                            AlgumaSemanticoUtils.adicionarErroSemantico(identc.getStart(), "identificador " + nomeVariavel + " ja declarado anteriormente");
+                        else
+                            adicionaVariavelTabela(nomeVariavel, tipoVariavel, identc.getStart(), ctx.variavel().tipo().getStart(), TipoEntrada.VARIAVEL); 
+                    }
+                }
             }
-        }
+        } else if (ctx.getText().contains("tipo")) {
+            
+            if (ctx.tipo().registro() != null) {
+                ArrayList<String> variaveisRegistro = new ArrayList<>();
+                
+                for (AlgumaGrammarParser.VariavelContext vc : ctx.tipo().registro().variavel()) {
+                    tipoVariavel = vc.tipo().getText();
+                    
+                    for (AlgumaGrammarParser.IdentificadorContext ic : vc.identificador()) {
+                        variaveisRegistro.add(ic.getText());
+                        variaveisRegistro.add(tipoVariavel);
+                    }
+                }
+                tabelaRegistro.put(ctx.IDENT().getText(), variaveisRegistro);
+            }
+        // Verifica se é a declaração de uma constante.
+        } else if (ctx.getText().contains("constante"))
+            adicionaVariavelTabela(ctx.IDENT().getText(), ctx.tipo_basico().getText(), ctx.IDENT().getSymbol(), ctx.IDENT().getSymbol(), TipoEntrada.VARIAVEL);
+        
 
         return super.visitDeclaracao_local(ctx);
     }

@@ -14,14 +14,23 @@ public class TabelaDeSimbolos {
         INVALIDO,
     }
 
+    public enum TipoEntrada {
+        VARIAVEL, 
+        PROCEDIMENTO,
+        FUNCAO,
+        BOOL
+    }
+
     class EntradaTabelaDeSimbolos {
         String nome;
         AlgumaGrammar tipo;
+        TipoEntrada tipoEnt;
         boolean flag_ponteiro = false;
 
-        private EntradaTabelaDeSimbolos(String nome, AlgumaGrammar tipo, boolean flag_ponteiro) {
+        private EntradaTabelaDeSimbolos(String nome, AlgumaGrammar tipo, TipoEntrada tipoEnt, boolean flag_ponteiro) {
             this.nome = nome;
             this.tipo = tipo;
+            this.tipoEnt = tipoEnt;
             this.flag_ponteiro = flag_ponteiro;
         }
     }
@@ -32,8 +41,8 @@ public class TabelaDeSimbolos {
         this.tabela = new HashMap<>();
     }
     
-    public void adicionar(String nome, AlgumaGrammar tipo, boolean flag_ponteir) {
-        tabela.put(nome, new EntradaTabelaDeSimbolos(nome, tipo, flag_ponteir));
+    public void adicionar(String nome, AlgumaGrammar tipo, TipoEntrada tipoEnt, boolean flag_ponteir) {
+        tabela.put(nome, new EntradaTabelaDeSimbolos(nome, tipo, tipoEnt, flag_ponteir));
     }
     
     public boolean existe(String nome) {
