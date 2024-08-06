@@ -21,7 +21,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
     static Escopos escoposAninhados = new Escopos();
 
     // Criação de uma tabela que armazenará as variáveis referentes a um registro
-    HashMap<String, ArrayList<String>> tabelaRegistro = new HashMap<>();
+    static HashMap<String, ArrayList<String>> tabelaRegistro = new HashMap<>();
 
     // Criação de uma tabela que armazenará os nomes e parâmetros das funções e procedimentos
     static HashMap<String, ArrayList<AlgumaGrammar>> tabelaFuncaoProcedimento = new HashMap<>();
@@ -145,8 +145,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                     }
                 }
             }
-        } else if (ctx.getText().contains("tipo")) {
-            
+        } else if (ctx.getText().contains("tipo")) { // Caso 3: verifica se é um novo tipo
             if (ctx.tipo().registro() != null) {
                 ArrayList<String> variaveisRegistro = new ArrayList<>();
                 
@@ -160,11 +159,9 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                 }
                 tabelaRegistro.put(ctx.IDENT().getText(), variaveisRegistro);
             }
-        // Verifica se é a declaração de uma constante.
         } else if (ctx.getText().contains("constante"))
             adicionaVariavelTabela(ctx.IDENT().getText(), ctx.tipo_basico().getText(), ctx.IDENT().getSymbol(), ctx.IDENT().getSymbol(), TipoEntrada.VARIAVEL);
         
-
         return super.visitDeclaracao_local(ctx);
     }
 
@@ -195,8 +192,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         if (tipoExpressao != AlgumaGrammar.INVALIDO) {
             // Caso a variável não tenha sido declarada, informa o erro
             if (!tabela.existe(nomeVariavel)) {
-                AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(),
-                        "identificador " + ctx.identificador().getText() + " nao declarado");
+                AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "identificador " + ctx.identificador().getText() + " nao declarado");
             } else {
                 // Caso tenha sido declarada, verifica os demais casos
                 AlgumaGrammar tipoVar = tabela.verificar(nomeVariavel);
@@ -212,9 +208,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                         * Erro? incompatível ^ */
                     if (deferenciacao && !ref_memoria) {
                         if (tipoVar != tipoExpressao)
-                            AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(),
-                                    "atribuicao nao compativel para " + ctx.start.getText() + nomeVariavel);
-
+                            AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "atribuicao nao compativel para " + ctx.start.getText() + nomeVariavel);
                     }    
                     /* Caso 2: Atribuir o endereço da expressão à variável.
                     * Verificar se há o símbolo &
@@ -228,23 +222,18 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                             // de mesmo tipo
                             AlgumaGrammar tipoId = tabela.verificar(identificadorExpressao);
                             if (tipoId != tipoVar) {
-                                AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(),
-                                        "atribuicao nao compativel para " + nomeVariavel);
+                                AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "atribuicao nao compativel para " + nomeVariavel);
                             }
                         }
                     }
                     // Exceções: Erro.
                     else{
-                        AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(),
-                                        "atribuicao nao compativel para " + nomeVariavel);
+                        AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "atribuicao nao compativel para " + nomeVariavel);
                     }
-
                 }
-            
                 // Caso a variável não seja ponteiro, verifica apenas o tipo
                 else if (tipoExpressao != tipoVar)
-                        AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(),
-                                "tipo de atribuicao incompativel para " + nomeVariavel);
+                    AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), "tipo de atribuicao incompativel para " + nomeVariavel);
             }
         }
         return super.visitCmdAtribuicao(ctx);
@@ -265,8 +254,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
 
         for (AlgumaGrammarParser.IdentificadorContext id : ctx.identificador())
             if (!tabela.existe(id.getText()))
-                AlgumaSemanticoUtils.adicionarErroSemantico(id.getStart(),
-                        "identificador " + id.getText() + " nao declarado");
+                AlgumaSemanticoUtils.adicionarErroSemantico(id.getStart(), "identificador " + id.getText() + " nao declarado");
 
         return super.visitCmdLeia(ctx);
     }
@@ -286,8 +274,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                     }
                 }
                 if (!declarado) {
-                    AlgumaSemanticoUtils.adicionarErroSemantico(id.getSymbol(),
-                            "identificador " + nomeVar + " nao declarado");
+                    AlgumaSemanticoUtils.adicionarErroSemantico(id.getSymbol(), "identificador " + nomeVar + " nao declarado");
                 }
             }
         }
