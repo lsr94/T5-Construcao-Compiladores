@@ -107,24 +107,22 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         //System.out.println(ctx.getText());
         if (ctx.getText().startsWith("declare")) {
             // Caso 1: a declaração é um registro
-            //System.out.println(ctx.variavel().tipo().registro().variavel());
-            //System.out.println(ctx.variavel().tipo().getText());
+            //System.out.println(ctx.variavel().identificador());
             if (ctx.variavel().tipo().registro() != null) {
-                for (var variavel : ctx.variavel().tipo().registro().variavel()) {
-                    System.out.println(variavel.getText());
-                    for(var ident: variavel.identificador()){
-                        System.out.println(ident.getText());
-                        //System.out.println("Adicionando Variavel: "+variavel.getText()+"."+ident.getText()+". Token: "+ident.getStart()+" Tipo Token: "+variavel.tipo().getStart()+ " Tipo entrada: "+TipoEntrada.VARIAVEL);
-                        //adicionaVariavelTabela(variavel.getText() + "." + ident.getText(), variavel.tipo().getText(), ident.getStart(), variavel.tipo().getStart(), TipoEntrada.VARIAVEL);
+                for (var variavel : ctx.variavel().identificador()){
+                    //System.out.println(variavel.getText());
+                    for(var variavel_registro: ctx.variavel().tipo().registro().variavel()){
+                        for (var ident: variavel_registro.identificador()){
+                            //System.out.println("Ident variavel registro:"+ident.getText());
+                            //System.out.println("Tipo variavel registro:"+variavel_registro.tipo().getText());
+                            adicionaVariavelTabela(variavel.getText() + "." + ident.getText(), variavel_registro.tipo().getText(), ident.getStart(), variavel_registro.tipo().getStart(), TipoEntrada.VARIAVEL);
+                        
                         }
-                    
-                    // for (AlgumaGrammarParser.VariavelContext vc : ctx.variavel().tipo().registro().variavel()) {
-                    //     tipoVariavel = ident.getText();
-
-                    //     for (AlgumaGrammarParser.IdentificadorContext identc : vc.identificador())
-                    //         
-                    // }
+                        //System.out.println("Adicionando Variavel: "+variavel.getText()+"."+ident.getText()+". Token: "+ident.getStart()+" Tipo Token: "+variavel.tipo().getStart()+ " Tipo entrada: "+TipoEntrada.VARIAVEL);
+                        }      
                 }
+                        
+                // }
             } else { // Caso 2: o tipo já foi declarado
                 tipoVariavel = ctx.variavel().tipo().getText();
                 // Caso 2.1: verifica se é um registro já declarado
