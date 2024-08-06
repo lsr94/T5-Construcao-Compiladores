@@ -163,7 +163,7 @@ public class AlgumaSemanticoUtils {
 
     // Verifica o tipo de Parcelas Não Unárias
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela,
-            AlgumaGrammarParser.Parcela_nao_unarioContext ctx) {
+        AlgumaGrammarParser.Parcela_nao_unarioContext ctx) {
         AlgumaGrammar retorno;
         String nome;
 

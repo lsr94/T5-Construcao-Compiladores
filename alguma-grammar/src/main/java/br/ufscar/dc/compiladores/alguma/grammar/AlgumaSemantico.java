@@ -60,6 +60,9 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
             case "logico":
                 tipoItem = AlgumaGrammar.LOGICO;
                 break;
+            case "registro":
+                tipoItem = AlgumaGrammar.REGISTRO;
+                break;
             default:
                 tipoItem = AlgumaGrammar.INVALIDO;
                 break;
@@ -101,19 +104,26 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
 
         String tipoVariavel;
         String nomeVariavel;
-
-        if (ctx.getText().contains("declare")) {
+        //System.out.println(ctx.getText());
+        if (ctx.getText().startsWith("declare")) {
             // Caso 1: a declaração é um registro
+            //System.out.println(ctx.variavel().tipo().registro().variavel());
+            //System.out.println(ctx.variavel().tipo().getText());
             if (ctx.variavel().tipo().registro() != null) {
-                for (AlgumaGrammarParser.IdentificadorContext ident : ctx.variavel().identificador()) {
-                    adicionaVariavelTabela(ident.getText(), "registro", ident.getStart(), ctx.tipo().getStart(), TipoEntrada.VARIAVEL);    
+                for (var variavel : ctx.variavel().tipo().registro().variavel()) {
+                    System.out.println(variavel.getText());
+                    for(var ident: variavel.identificador()){
+                        System.out.println(ident.getText());
+                        //System.out.println("Adicionando Variavel: "+variavel.getText()+"."+ident.getText()+". Token: "+ident.getStart()+" Tipo Token: "+variavel.tipo().getStart()+ " Tipo entrada: "+TipoEntrada.VARIAVEL);
+                        //adicionaVariavelTabela(variavel.getText() + "." + ident.getText(), variavel.tipo().getText(), ident.getStart(), variavel.tipo().getStart(), TipoEntrada.VARIAVEL);
+                        }
+                    
+                    // for (AlgumaGrammarParser.VariavelContext vc : ctx.variavel().tipo().registro().variavel()) {
+                    //     tipoVariavel = ident.getText();
 
-                    for (AlgumaGrammarParser.VariavelContext vc : ctx.variavel().tipo().registro().variavel()) {
-                        tipoVariavel = ident.getText();
-
-                        for (AlgumaGrammarParser.IdentificadorContext identc : vc.identificador())
-                            adicionaVariavelTabela(ident.getText() + "." + identc.getText(), tipoVariavel, identc.getStart(), vc.tipo().getStart(), TipoEntrada.VARIAVEL);
-                    }
+                    //     for (AlgumaGrammarParser.IdentificadorContext identc : vc.identificador())
+                    //         
+                    // }
                 }
             } else { // Caso 2: o tipo já foi declarado
                 tipoVariavel = ctx.variavel().tipo().getText();
@@ -164,6 +174,16 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         
         return super.visitDeclaracao_local(ctx);
     }
+
+
+   // Visita registro e cada uma das variáveis
+    @Override 
+    public Void visitRegistro(AlgumaGrammarParser.RegistroContext ctx) {
+        
+        return visitChildren(ctx); 
+    
+    }
+
 
     @Override
     public Void visitDecl_local_global(AlgumaGrammarParser.Decl_local_globalContext ctx) {
