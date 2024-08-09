@@ -1,2 +1,12 @@
-Linha 9: tipo de atribuicao incompativel para ponto1.x
+Linha 10: identificador tVinho ja declarado anteriormente
+Linha 16: identificador vinho.Preco nao declarado
+Linha 19: identificador preco nao declarado
+Linha 19: identificador preco nao declarado
+Linha 19: identificador nome nao declarado
+Linha 22: identificador nome nao declarado
+Linha 25: identificador preco nao declarado
+Linha 28: identificador nome nao declarado
+Linha 28: identificador preco nao declarado
+Linha 28: identificador vinhocaro nao declarado
+Linha 28: identificador tipoVinho nao declarado
 Fim da compilacao
