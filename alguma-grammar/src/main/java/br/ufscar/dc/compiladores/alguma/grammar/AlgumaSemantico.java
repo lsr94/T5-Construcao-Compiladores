@@ -2,6 +2,8 @@ package br.ufscar.dc.compiladores.alguma.grammar;
 
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.DeclaracoesContext;
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.IdentificadorContext;
+import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.ParcelaContext;
+import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.Parcela_nao_unarioContext;
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.Parcela_unarioContext;
 import br.ufscar.dc.compiladores.alguma.grammar.Escopos;
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaSemanticoUtils;
@@ -23,6 +25,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
     // Criação de uma tabela que armazenará as variáveis referentes a um registro
     static HashMap<String, ArrayList<String>> tabelaRegistro = new HashMap<>();
 
+    
     // Criação de uma tabela que armazenará os nomes e parâmetros das funções e procedimentos
     static HashMap<String, ArrayList<AlgumaGrammar>> tabelaFuncaoProcedimento = new HashMap<>();
 
@@ -297,9 +300,16 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         return super.visitCmdLeia(ctx);
     }
 
-    // Visita parcelas unárias
+    // Visita parcelas
     @Override
-    public Void visitParcela_unario(Parcela_unarioContext ctx) {
+    public Void visitParcela(ParcelaContext ctx) {
+       return super.visitParcela(ctx);
+    }
+
+
+    // Visita parcelas não unárias
+    @Override
+    public Void visitParcela_nao_unario(Parcela_nao_unarioContext ctx) {
         if (ctx.identificador() != null) {
             IdentificadorContext idc = ctx.identificador();
             for (var id : idc.IDENT()) {
@@ -316,25 +326,100 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                 }
             }
         }
+        // Caso o if acima não seja satisfeito, a parcela não unária é uma cadeira
+        return super.visitParcela_nao_unario(ctx);
+    }
+    // Visita parcelas unárias
+    @Override
+    public Void visitParcela_unario(Parcela_unarioContext ctx) {
+        if (ctx.identificador() != null) {
+            IdentificadorContext idc = ctx.identificador();
+            for (var id : idc.IDENT()) {
+                String nomeVar = id.getText();
+                //System.out.println("Parcela Unaria. Nome var: " + nomeVar);
+                boolean declarado = false;
+                for (var tabela : escoposAninhados.percorrerEscoposAninhados()) {
+                    System.out.println("Nome var da parcela:"+nomeVar);
+                    if (tabela.existe(nomeVar)) {
+                        declarado = true;
+                    }
+                }
+                if (!declarado) {
+                    AlgumaSemanticoUtils.adicionarErroSemantico(id.getSymbol(), "identificador " + nomeVar + " nao declarado");
+                }
+            }
+        }
 
         return super.visitParcela_unario(ctx);
     }
 
     @Override
+    public Void visitFator_logico(AlgumaGrammarParser.Fator_logicoContext ctx) {
+        return super.visitFator_logico(ctx);
+    }
+
+    @Override
+    public Void visitTermo_logico(AlgumaGrammarParser.Termo_logicoContext ctx) {
+        return super.visitTermo_logico(ctx);
+    }
+
+    @Override
+    public Void visitTermo(AlgumaGrammarParser.TermoContext ctx) {
+        return super.visitTermo(ctx);
+    }
+
+    @Override
+    public Void visitFator(AlgumaGrammarParser.FatorContext ctx) {
+        return super.visitFator(ctx);
+    }
+
+
+    @Override
     public Void visitCmdSe(AlgumaGrammarParser.CmdSeContext ctx) {
         tabela = escoposAninhados.obterEscopoAtual();
-        
-        //var conditions = ctx.expressao().termo_logico().get(0);
+
+        var conditions = ctx.expressao().termo_logico().get(0);
         //var expressions = ctx.expressao().termo_logico().get(1);
 
-        System.out.println(ctx.expressao().getText());
-        System.out.println(ctx.expressao().op_logico_1());
-        System.out.println(ctx.expressao().termo_logico());
+
         // Leitura dos termos
-        for (var termos: ctx.expressao().termo_logico()){
+
+        // Caso não haja o operador "ou" (op_logico_1) 
+        // => há apenas termos lógicos (fatores lógicos e op_logico_2 )
+        if (ctx.expressao().op_logico_1().isEmpty()){
+            System.out.println(conditions.fator_logico().size());
             
-            System.out.println(termos.getText());
+            // Lê cada condição do comando 'Se'
+            for (var fator_logico: conditions.fator_logico()){
+                System.out.println("\t\tImprimindo 'fator'"+fator_logico.getText());
+                
+                // Varre cada uma das expressões
+                for (var exps: fator_logico.parcela_logica().exp_relacional().exp_aritmetica()){
+                    for (var termo: exps.termo()){
+                        System.out.println("\t\t\t\tImprimindo 'termo'"+termo.getText());
+                        // Testar se é CADEIA 
+                        
+                        
+                        // Testar outros tipos: ...
+                    }
+                    //.fator().parcela().parcela_unario().IDENT.getText());
+                    
+                }
+            }
+
         }
+        // Há operador 'ou':
+        else{
+            System.out.println("To-do");
+        }
+        // for (var fator: conditions.fator_logico()){
+
+        //     System.out.println(fator.getText());
+        // }
+        // for (var termos: ctx.expressao().termo_logico()){
+            
+        //     System.out.println(termos.getText());
+        // }
         
 
 
