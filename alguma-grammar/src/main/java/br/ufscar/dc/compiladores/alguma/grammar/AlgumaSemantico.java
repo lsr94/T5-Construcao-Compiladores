@@ -23,9 +23,9 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
     static Escopos escoposAninhados = new Escopos();
 
     // Criação de uma tabela que armazenará as variáveis referentes a um registro
-    static HashMap<String, ArrayList<String>> tabelaRegistro = new HashMap<>();
+   static HashMap<String, ArrayList<String>> tabelaRegistro = new HashMap<>();
 
-    
+
     // Criação de uma tabela que armazenará os nomes e parâmetros das funções e procedimentos
     static HashMap<String, ArrayList<AlgumaGrammar>> tabelaFuncaoProcedimento = new HashMap<>();
 
@@ -332,21 +332,47 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
     // Visita parcelas unárias
     @Override
     public Void visitParcela_unario(Parcela_unarioContext ctx) {
+        System.out.println("\tVisitando parcela unaria: "+ctx.getText());
         if (ctx.identificador() != null) {
+            String var_reg_nome = "";
             IdentificadorContext idc = ctx.identificador();
             for (var id : idc.IDENT()) {
-                String nomeVar = id.getText();
-                //System.out.println("Parcela Unaria. Nome var: " + nomeVar);
+                System.out.println("Procurando pelo id: "+id.getText());
                 boolean declarado = false;
-                for (var tabela : escoposAninhados.percorrerEscoposAninhados()) {
-                    System.out.println("Nome var da parcela:"+nomeVar);
-                    if (tabela.existe(nomeVar)) {
+                var nomeVar = id.getText();
+                // Verifica se a variável já existe no escopo atual e se é um registro
+                if (tabela.existe(nomeVar)){
+                    String tipo_variavel = tabela.verificar(id.getText()).name();
+                    if (tipo_variavel=="REGISTRO"){
+                        // Caso seja um registro, procura pelo atributo composto 
+                        //(variável.atributo) na tabela de símbolos
+                        var_reg_nome = nomeVar;
+                    }
+                    declarado = true;
+                    continue;
+                }
+                else if (var_reg_nome.length()>0){
+                    if (tabela.existe(var_reg_nome+"."+nomeVar)) {
                         declarado = true;
+                    }else{
+                        AlgumaSemanticoUtils.adicionarErroSemantico(id.getSymbol(), "identificador " + var_reg_nome+"."+nomeVar + " nao declarado");
+                    }
+                    var_reg_nome = "";
+                }
+                else{
+                    //System.out.println("Parcela Unaria. Nome var: " + nomeVar);
+                    for (var tabela : escoposAninhados.percorrerEscoposAninhados()) {
+                        System.out.println("Nome var da parcela:"+nomeVar);
+                        if (tabela.existe(nomeVar)) {
+                            declarado = true;
+                        }
+                    }
+                    if (!declarado) {
+                        AlgumaSemanticoUtils.adicionarErroSemantico(id.getSymbol(), "identificador " + nomeVar + " nao declarado");
                     }
                 }
-                if (!declarado) {
-                    AlgumaSemanticoUtils.adicionarErroSemantico(id.getSymbol(), "identificador " + nomeVar + " nao declarado");
-                }
+                
+                
             }
         }
 
