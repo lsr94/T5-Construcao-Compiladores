@@ -1,2 +1,0 @@
-Linha 9: tipo de atribuicao incompativel para ponto1.x
-Fim da compilacao

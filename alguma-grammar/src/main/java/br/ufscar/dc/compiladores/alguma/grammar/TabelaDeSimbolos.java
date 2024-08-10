@@ -58,6 +58,10 @@ public class TabelaDeSimbolos {
         return tabela.get(nome).tipo;
     }
 
+    public TipoEntrada verificartipoEnt(String nome) {
+        return tabela.get(nome).tipoEnt;
+    }
+
     public boolean verificar_ponteiro(String nome) {
         return tabela.get(nome).flag_ponteiro;
     }
