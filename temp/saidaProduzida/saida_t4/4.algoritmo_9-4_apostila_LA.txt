@@ -42,4 +42,10 @@ Linha 29: identificador valor nao declarado
 Linha 26: identificador valor nao declarado
 Linha 27: identificador valor nao declarado
 Linha 29: identificador valor nao declarado
+Linha 44: incompatibilidade de parametros na chamada de menorInteiro
+Linha 46: incompatibilidade de parametros na chamada de menorReal
+Linha 50: incompatibilidade de parametros na chamada de modulo
+Linha 58: incompatibilidade de parametros na chamada de menorReal
+Linha 58: incompatibilidade de parametros na chamada de modulo
+Linha 58: incompatibilidade de parametros na chamada de modulo
 Fim da compilacao

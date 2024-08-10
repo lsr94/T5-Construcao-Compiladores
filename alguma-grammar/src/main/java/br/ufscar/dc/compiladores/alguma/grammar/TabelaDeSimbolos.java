@@ -1,6 +1,8 @@
 package br.ufscar.dc.compiladores.alguma.grammar;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TabelaDeSimbolos {
@@ -37,6 +39,9 @@ public class TabelaDeSimbolos {
 
     private final Map<String, EntradaTabelaDeSimbolos> tabela;
 
+    static HashMap<String, ArrayList<AlgumaGrammar>> tabelaFuncaoProcedimento = new HashMap<>();
+
+    
     public TabelaDeSimbolos() {
         this.tabela = new HashMap<>();
     }
@@ -57,4 +62,5 @@ public class TabelaDeSimbolos {
         return tabela.get(nome).flag_ponteiro;
     }
 
+    
 }
