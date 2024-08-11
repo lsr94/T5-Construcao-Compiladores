@@ -383,6 +383,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
     public Void visitCmdAtribuicao(AlgumaGrammarParser.CmdAtribuicaoContext ctx) {
         tabela = escoposAninhados.obterEscopoAtual();
         String nomeVariavel = ctx.identificador().IDENT(0).getText();
+        System.out.println("Avaliando a variavel "+nomeVariavel);
         boolean deferenciacao = ctx.start.getText().equals("^");
         boolean ref_memoria = ctx.expressao().getText().startsWith("&");
         AlgumaGrammar tipoExpressao = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.expressao());
@@ -427,7 +428,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                 System.out.println("\tTipo da expressao: "+tipoExpressao+". Tipo da variavel: "+tipoVar);
                 if (!tipoExpressao.equals(tipoVar)) {
                     AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), 
-                        "atribuicao nao compativel para " + nomeVariavel + "[" + ctx.identificador().dimensao().getText() + "]");
+                        "atribuicao nao compativel para " + nomeVariavel + ctx.identificador().dimensao().getText());
                 }else{
                     int posicao_array = ctx.identificador().dimensao().exp_aritmetica().size();
                     int tamanho_total = tabela.verificarTamanhoArray(nomeVariavel);

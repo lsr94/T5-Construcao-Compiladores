@@ -49,14 +49,15 @@ public class AlgumaSemanticoUtils {
         AlgumaGrammar aux = null;
         for (var ta : ctx.termo()) {
             AlgumaGrammar atual = verificarTipo(tabela, ta);
-            
+            System.out.println("Verifica Tipo Exp Arit: Atual: "+atual+". Prévio:" +aux);
             if (atual == AlgumaGrammar.INVALIDO){
                 aux = AlgumaGrammar.INVALIDO;
                 break;
             }
-
-            else if (aux == null || verificaCompatibilidade(atual, aux)){
-                System.out.println("Verifica Tipo Exp Arit: Atual: "+atual+". Prévio:" +aux);
+            else if (aux == null){
+                aux = atual;
+            }
+            else if (verificaCompatibilidade(atual, aux)){
                 aux = retornaTipoCompatibilidade(atual,aux); // Retorna o tipo compatível
             } 
 
