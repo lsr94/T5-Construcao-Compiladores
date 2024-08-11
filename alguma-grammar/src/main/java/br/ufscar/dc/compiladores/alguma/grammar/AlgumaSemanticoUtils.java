@@ -15,6 +15,8 @@ public class AlgumaSemanticoUtils {
         errosSemanticos.add(String.format("Linha %d: %s", linha, mensagem));
     }
 
+
+
     public static boolean verificaCompatibilidade(AlgumaGrammar T1, AlgumaGrammar T2) {
         boolean flag = false;
 
