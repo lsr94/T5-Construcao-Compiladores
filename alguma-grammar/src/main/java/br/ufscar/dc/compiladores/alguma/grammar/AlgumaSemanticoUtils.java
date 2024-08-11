@@ -15,28 +15,6 @@ public class AlgumaSemanticoUtils {
         errosSemanticos.add(String.format("Linha %d: %s", linha, mensagem));
     }
 
-    /*
-     * Método auxiliar que verifica a compatibilidade entre operadores aritméticos
-     * Caso a operação envolva pelo menos um valor real, a operação deve ser tratada
-     * como uma operação entre números reais, mesmo que um deles seja um inteiro
-     */
-    // public static boolean verificaCompatibilidade(AlgumaGrammar T1, AlgumaGrammar
-    // T2, boolean flag_ponteiro_t1, boolean flag_ponteiro_t2) {
-    // boolean flag = false;
-    // if (flag_ponteiro_t1 == flag_ponteiro_t2){
-    // flag = true;
-    // if (T1==T2)
-    // flag = true;
-    // else if ((T1 == AlgumaGrammar.INTEIRO && T2 == AlgumaGrammar.REAL)||(T1 ==
-    // AlgumaGrammar.REAL && T2 == AlgumaGrammar.INTEIRO))
-    // flag = true;
-    // else
-    // flag = false;
-    // } else
-    // flag = false;
-    // return flag;
-    // }
-
     public static boolean verificaCompatibilidade(AlgumaGrammar T1, AlgumaGrammar T2) {
         boolean flag = false;
 
@@ -44,80 +22,97 @@ public class AlgumaSemanticoUtils {
             flag = true;
         else if ((T1 == AlgumaGrammar.INTEIRO && T2 == AlgumaGrammar.REAL) || (T1 == AlgumaGrammar.REAL && T2 == AlgumaGrammar.INTEIRO))
             flag = true;
+        else 
+            flag = false;
         return flag;
     }
 
-    // ############## ACHO QUE PODE APAGAR, POIS É IGUAL O DE CIMA ##############
-    // Método auxiliar que verifica a compatibilidade entre operadores aritméticos
-    // para tratá-los como uma operação lógica
-    /*public static boolean verificaCompatibilidadeLogica(AlgumaGrammar T1, AlgumaGrammar T2) {
-        boolean flag = false;
+    // Retorna o tipo compatível entre duas variáveis ou inválido
+    // dois tipos iguais => retorna o próprio tipo
+    // um inteiro e um real => retorna real
+    // outra combinação: retorna inválido 
+    public static AlgumaGrammar retornaTipoCompatibilidade(AlgumaGrammar T1, AlgumaGrammar T2){
+        AlgumaGrammar retorno = AlgumaGrammar.INVALIDO;
 
-        if (T1 == AlgumaGrammar.INTEIRO && T2 == AlgumaGrammar.REAL)
-            flag = true;
-        else if (T1 == AlgumaGrammar.REAL && T2 == AlgumaGrammar.INTEIRO)
-            flag = true;
-
-        return flag;
-    }*/
-
-    // Verifica os tipos das Expressões Aritméticas
-    public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.Exp_aritmeticaContext ctx) {
-        AlgumaGrammar retorno = null;
-        for (var ta : ctx.termo()) {
-
-            AlgumaGrammar aux = verificarTipo(tabela, ta);
-
-            if ((verificaCompatibilidade(aux, retorno)) && (aux != AlgumaGrammar.INVALIDO))
-                retorno = AlgumaGrammar.REAL;
-            else
-                retorno = aux;
-
-        }
+        if (T1 == T2)
+            retorno = T1;
+        else if (T1 == AlgumaGrammar.INVALIDO || T2 == AlgumaGrammar.INVALIDO)
+            retorno = AlgumaGrammar.INVALIDO;
+        else if ((T1==AlgumaGrammar.REAL && T2==AlgumaGrammar.INTEIRO)||(T1==AlgumaGrammar.INTEIRO && T2==AlgumaGrammar.REAL))
+            retorno = AlgumaGrammar.REAL;
 
         return retorno;
     }
 
-    // Verifica os tipos dos Termos Aritméticos
+    // Verifica os tipos das Expressões Aritméticas
+    public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.Exp_aritmeticaContext ctx) {
+        AlgumaGrammar aux = null;
+        for (var ta : ctx.termo()) {
+            AlgumaGrammar atual = verificarTipo(tabela, ta);
+            
+            if (atual == AlgumaGrammar.INVALIDO){
+                aux = AlgumaGrammar.INVALIDO;
+                break;
+            }
+
+            else if (aux == null || verificaCompatibilidade(atual, aux)){
+                System.out.println("Verifica Tipo Exp Arit: Atual: "+atual+". Prévio:" +aux);
+                aux = retornaTipoCompatibilidade(atual,aux); // Retorna o tipo compatível
+            } 
+
+            else {
+                aux = AlgumaGrammar.INVALIDO;
+                break;
+            }
+        }
+        System.out.println("\n Verifica Tipo Exp AritTipo final: "+aux);
+        return aux;
+    }
+
+    // Verifica os tipos dos Termos
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.TermoContext ctx) {
         AlgumaGrammar retorno = null;
 
         for (var fa : ctx.fator()) {
-            AlgumaGrammar aux = verificarTipo(tabela, fa);
-            if (retorno == null) {
-                retorno = aux;
-
-                // Verifica se a variável de retorno já não é igual à auxiliar e se a variável
-                // auxiliar não é inválida
-            } else if (retorno != aux && aux != AlgumaGrammar.INVALIDO) {
-                // Se uma das variáveis tem tipo real e outra tem tipo inteiro, o retorno será
-                // de tipo inteiro
-                if ((retorno == AlgumaGrammar.REAL && aux == AlgumaGrammar.INTEIRO)
-                        || (retorno == AlgumaGrammar.INTEIRO && aux == AlgumaGrammar.REAL))
-                    retorno = AlgumaGrammar.REAL;
-                // Caso contrário, os tipos são incompatíveis
-                else {
+            AlgumaGrammar tipoAtual = verificarTipo(tabela, fa);
+            if (tipoAtual == AlgumaGrammar.INVALIDO)
+                break;
+            else if (retorno == null) {
+                retorno = tipoAtual;
+            }
+            else {
+                retorno = retornaTipoCompatibilidade(tipoAtual, retorno);
+                if (retorno == AlgumaGrammar.INVALIDO)
                     adicionarErroSemantico(ctx.start, "Termo " + ctx.getText() + " contem tipos incompativeis");
-                    retorno = AlgumaGrammar.INVALIDO;
-                }
-
             }
         }
         return retorno;
     }
 
-    // Verifica os tipos dos Fatores Aritméticos
+    // Verifica os tipos dos Fatores
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.FatorContext ctx) {
         AlgumaGrammar retorno = null;
 
         for (var parcela : ctx.parcela()) {
-            retorno = verificarTipo(tabela, parcela);
+            AlgumaGrammar tipoAtual = verificarTipo(tabela, parcela);
+
+            if (tipoAtual == AlgumaGrammar.INVALIDO)
+                break;
+            else if (retorno == null) {
+                retorno = tipoAtual;
+            }
+            else {
+                retorno = retornaTipoCompatibilidade(tipoAtual, retorno);
+                if (retorno == AlgumaGrammar.INVALIDO)
+                    adicionarErroSemantico(ctx.start, "Fator " + ctx.getText() + " contem tipos incompativeis");
+            }
+
             // Caso algum termo da parcela seja inválido, interrompe a verificação
         }
         return retorno;
     }
 
-    // Vreificação de tipo de Parcela
+    // Verificação de tipo de Parcela
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.ParcelaContext ctx) {
         // Identifica se é uma parcela unária ou não unária
         if (ctx.parcela_unario() != null)
@@ -133,12 +128,14 @@ public class AlgumaSemanticoUtils {
 
         // Verificação de variáveis (IDENT - identificador)
         if (ctx.identificador() != null) {
-            nome = ctx.identificador().getText();
-
+            nome = ctx.identificador().IDENT(0).getText();
+  
             // Se o identificador (variável) já tiver sido declarado, apenas retorna seu
             // tipo
-            if (tabela.existe(nome))
+            if (tabela.existe(nome)){
                 retorno = tabela.verificar(nome);
+                System.out.println("Verificar Tipo identificador: Variável "+nome+" encontrada com tipo "+retorno);
+            }
             /*
              * Percorre os escopos aninhados em busca da variável e retorna o tipo. Caso não
              * exista em nenhum deles, retorna o tipo inválido
@@ -168,7 +165,7 @@ public class AlgumaSemanticoUtils {
         String nome;
 
         if (ctx.identificador() != null) {
-            nome = ctx.identificador().getText();
+            nome = ctx.identificador().IDENT(0).getText();
             // Verifica se o identificador existe na tabela de símbolos e retorna o tipo
             if (!tabela.existe(nome)) {
                 retorno = AlgumaGrammar.INVALIDO;
@@ -180,16 +177,44 @@ public class AlgumaSemanticoUtils {
         return retorno;
     }
 
+    // Verifica o tipo de Expressão Relacional
+    public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.Exp_relacionalContext ctx) {
+        AlgumaGrammar retorno = verificarTipo(tabela, ctx.exp_aritmetica().get(0));
+        ctx.exp_aritmetica().forEach(element -> {System.out.println("\t\tExpressao aritmetica: "+element.getText());} );
+        if (ctx.exp_aritmetica().size() > 1) {
+
+            // Verifica o tipo da expressão aritmética
+            AlgumaGrammar tipoAtual = verificarTipo(tabela, ctx.exp_aritmetica().get(1));
+
+            // Semelhante ao que foi feito com as expressões aritméticas, ocorre uma
+            // verificação
+            // para saber se a expressão atual pode ser tratada como uma operação lógica.
+            if (retorno == tipoAtual || verificaCompatibilidade(retorno, tipoAtual))
+                retorno = AlgumaGrammar.LOGICO;
+            else
+                retorno = AlgumaGrammar.INVALIDO;
+        }
+
+        return retorno;
+
+    }
     // Verifica o tipo de Expressões
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.ExpressaoContext ctx) {
         AlgumaGrammar retorno = verificarTipo(tabela, ctx.termo_logico(0));
 
         // Para expressões lógicas, a ideia resume-se apenas em verificar se os tipos
         // analisados são diferentes
+
         for (AlgumaGrammarParser.Termo_logicoContext termoLogico : ctx.termo_logico()) {
+            System.out.println(termoLogico.getText());
             AlgumaGrammar tipoAtual = verificarTipo(tabela, termoLogico);
-            if (retorno != tipoAtual && tipoAtual != AlgumaGrammar.INVALIDO)
-                retorno = AlgumaGrammar.INVALIDO;
+            
+            if (tipoAtual == AlgumaGrammar.INVALIDO)
+                break;
+            else
+                retorno = retornaTipoCompatibilidade(tipoAtual, retorno);
+            // if (retorno != tipoAtual || tipoAtual != AlgumaGrammar.INVALIDO)
+            //     retorno = AlgumaGrammar.INVALIDO;
         }
 
         return retorno;
@@ -201,8 +226,10 @@ public class AlgumaSemanticoUtils {
 
         for (AlgumaGrammarParser.Fator_logicoContext fatorLogico : ctx.fator_logico()) {
             AlgumaGrammar tipoAtual = verificarTipo(tabela, fatorLogico);
-            if (retorno != tipoAtual && tipoAtual != AlgumaGrammar.INVALIDO)
-                retorno = AlgumaGrammar.INVALIDO;
+            if (tipoAtual == AlgumaGrammar.INVALIDO)
+                break;
+            else
+                retorno = retornaTipoCompatibilidade(tipoAtual, retorno);
         }
         return retorno;
     }
@@ -227,27 +254,6 @@ public class AlgumaSemanticoUtils {
 
     }
 
-    // Verifica o tipo de Expressão Relacional
-    public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, AlgumaGrammarParser.Exp_relacionalContext ctx) {
-        AlgumaGrammar retorno = verificarTipo(tabela, ctx.exp_aritmetica().get(0));
-
-        if (ctx.exp_aritmetica().size() > 1) {
-
-            // Verifica o tipo da expressão aritmética
-            AlgumaGrammar tipoAtual = verificarTipo(tabela, ctx.exp_aritmetica().get(1));
-
-            // Semelhante ao que foi feito com as expressões aritméticas, ocorre uma
-            // verificação
-            // para saber se a expressão atual pode ser tratada como uma operação lógica.
-            if (retorno == tipoAtual || verificaCompatibilidade(retorno, tipoAtual))
-                retorno = AlgumaGrammar.LOGICO;
-            else
-                retorno = AlgumaGrammar.INVALIDO;
-        }
-
-        return retorno;
-
-    }
 
     // Verifica o tipo da variável na tabela de símbolos
     public static AlgumaGrammar verificarTipo(TabelaDeSimbolos tabela, String nomeVar) {

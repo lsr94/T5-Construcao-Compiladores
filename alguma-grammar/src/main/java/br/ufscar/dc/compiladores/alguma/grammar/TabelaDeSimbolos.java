@@ -20,7 +20,8 @@ public class TabelaDeSimbolos {
         VARIAVEL, 
         PROCEDIMENTO,
         FUNCAO,
-        BOOL
+        BOOL,
+        ARRAY
     }
 
     class EntradaTabelaDeSimbolos {
@@ -28,12 +29,14 @@ public class TabelaDeSimbolos {
         AlgumaGrammar tipo;
         TipoEntrada tipoEnt;
         boolean flag_ponteiro = false;
+        int tamanhoArray = -1;
 
-        private EntradaTabelaDeSimbolos(String nome, AlgumaGrammar tipo, TipoEntrada tipoEnt, boolean flag_ponteiro) {
+        private EntradaTabelaDeSimbolos(String nome, AlgumaGrammar tipo, TipoEntrada tipoEnt, boolean flag_ponteiro, int tamanhoArray) {
             this.nome = nome;
             this.tipo = tipo;
             this.tipoEnt = tipoEnt;
             this.flag_ponteiro = flag_ponteiro;
+            this.tamanhoArray = tamanhoArray;
         }
     }
 
@@ -46,10 +49,16 @@ public class TabelaDeSimbolos {
         this.tabela = new HashMap<>();
     }
     
-    public void adicionar(String nome, AlgumaGrammar tipo, TipoEntrada tipoEnt, boolean flag_ponteir) {
-        tabela.put(nome, new EntradaTabelaDeSimbolos(nome, tipo, tipoEnt, flag_ponteir));
+    public void adicionar(String nome, AlgumaGrammar tipo, TipoEntrada tipoEnt, boolean flag_ponteir, int tamArray) {
+        tabela.put(nome, new EntradaTabelaDeSimbolos(nome, tipo, tipoEnt, flag_ponteir, tamArray));
+    }
+    public void remover(String nome) {
+        tabela.remove(nome);
     }
     
+    public int verificarTamanhoArray(String nome) {
+        return tabela.get(nome).tamanhoArray;
+    }
     public boolean existe(String nome) {
         return tabela.containsKey(nome);
     }
