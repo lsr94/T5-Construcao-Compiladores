@@ -130,7 +130,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                 //("Entrou no Caso 1.1!");
                 for (var variavel : ctx.variavel().identificador()){
                     //System.out.println(variavel.getText());
-                    for(var variavel_registro: ctx.variavel().tipo().registro().variavel()){
+                    for(var variavel_registro: ctx.variavel().tipo().registro().variavel()){ 
                         for (var ident: variavel_registro.identificador()){
                             System.out.println("Ident variavel registro:"+ident.getText());
                             System.out.println("Tipo variavel registro:"+variavel_registro.tipo().getText());
@@ -429,14 +429,6 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                 if (!tipoExpressao.equals(tipoVar)) {
                     AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(), 
                         "atribuicao nao compativel para " + nomeVariavel + ctx.identificador().dimensao().getText());
-                }else{
-                    int posicao_array = ctx.identificador().dimensao().exp_aritmetica().size();
-                    int tamanho_total = tabela.verificarTamanhoArray(nomeVariavel);
-
-                    if (posicao_array >= tamanho_total){
-                        AlgumaSemanticoUtils.adicionarErroSemantico(ctx.identificador().getStart(),
-                            "indice " + posicao_array + " fora dos limites do array " + nomeVariavel);
-                    }
                 }
             }
             // Handle other non-pointer variable assignments
@@ -692,7 +684,6 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         visitChildren(ctx);
 
 
-        tabela.remover(nomeVariavel);
         return super.visitCmdPara(ctx);
     }
 
@@ -718,10 +709,8 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                 for (var exps: fator_logico.parcela_logica().exp_relacional().exp_aritmetica()){
                     for (var termo: exps.termo()){
                         //System.out.println("\t\t\t\tImprimindo 'termo'"+termo.getText());
-                        // Testar se é CADEIA 
-                        
-                        
-                        // Testar outros tipos: ...
+
+
                     }
 
                 }
