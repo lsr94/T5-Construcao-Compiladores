@@ -9,11 +9,13 @@ import br.ufscar.dc.compiladores.alguma.grammar.Escopos;
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaSemanticoUtils;
 import br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos;
 import br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos.AlgumaGrammar;
+import br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos.EntradaTabelaDeSimbolos;
 import br.ufscar.dc.compiladores.alguma.grammar.TabelaDeSimbolos.TipoEntrada;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.antlr.v4.runtime.Token;
 
@@ -37,6 +39,9 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
     // Função auxiliar para definir o tipo na gramática
     public AlgumaGrammar determinarTipoAlgumaGrammar(String tipoVariavel){
         AlgumaGrammar tipoItem = AlgumaGrammar.INVALIDO; 
+        
+
+        
         switch (tipoVariavel) {
             case "literal":
                 tipoItem = AlgumaGrammar.LITERAL;
@@ -55,6 +60,11 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                 break;
             case "void":
                 tipoItem = AlgumaGrammar.VOID;
+                break;
+            default: 
+                if (tabelaRegistro.containsKey(tipoVariavel)) {
+                    tipoItem = AlgumaGrammar.REGISTRO;
+                }
                 break;
         }
         return tipoItem;
@@ -285,17 +295,42 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         // Extração dos tipos dos parâmetros
         List<TabelaDeSimbolos.AlgumaGrammar> tiposParametros = new ArrayList<>();
         if (ctx.parametros() != null) {
-            int counter = 0;
             for (var param : ctx.parametros().parametro()) {
                 TabelaDeSimbolos.AlgumaGrammar paramType = determinarTipoAlgumaGrammar(param.tipo_estendido().getText());
                 tiposParametros.add(paramType);
-                counter = counter + 1;
-                System.out.println("Parâmetro: "+counter);
-                param.identificador().forEach(elemento -> {System.out.println("Adicionando parâmetros: Nome: "+elemento.getText()+". Tipo de parâmetro:"+paramType+". Tipo de entrada: "+TipoEntrada.VARIAVEL);});
-                param.identificador().forEach(elemento -> {tabelaEscopos.adicionar(elemento.getText(), paramType, TipoEntrada.VARIAVEL, false, -1);});
                 
+                if (paramType == AlgumaGrammar.INVALIDO) {
+                    AlgumaSemanticoUtils.adicionarErroSemantico(param.getStart(),
+                            "tipo " + param.tipo_estendido().getText() + " nao declarado");
+                }
+                tiposParametros.add(paramType);
+                if (paramType == AlgumaGrammar.REGISTRO) {
+                    String nomeRegistro = param.tipo_estendido().getText();
+                    if (tabelaRegistro.containsKey(nomeRegistro)) {
+                        ArrayList<String> variavelRegistro = tabelaRegistro.get(nomeRegistro);
+
+                        for (var ident : param.identificador()) {
+                            String nomeVariavel = ident.getText();
+                            tabelaEscopos.adicionar(nomeVariavel, paramType, TipoEntrada.VARIAVEL, false, -1);
+                            System.out.println("Adicionando variável: " + nomeVariavel + " com tipo " + TipoEntrada.VARIAVEL);
+                            for (int i = 0; i < variavelRegistro.size(); i += 2) {
+                                String nomeAtributo = nomeVariavel + "." + variavelRegistro.get(i);
+                                AlgumaGrammar tipoAtributo = determinarTipoAlgumaGrammar(variavelRegistro.get(i + 1));
+                                tabelaEscopos.adicionar(nomeAtributo, tipoAtributo, TipoEntrada.VARIAVEL, false, -1);
+                                System.out.println("Adicionando atributo do registro: " + nomeAtributo + " com tipo " + tipoAtributo);
+                            }
+                        }
+                    } else {
+                        AlgumaSemanticoUtils.adicionarErroSemantico(param.getStart(),
+                            "tipo de registro " + nomeRegistro + " nao declarado");
+                    }
+                } else {
+                param.identificador().forEach(elemento -> {tabelaEscopos.adicionar(elemento.getText(), 
+                    paramType, 
+                    TipoEntrada.VARIAVEL, 
+                    false, -1);});
+                }
             }
-            
         }
 
         // Criação da assinatura como uma arraylist do tipo de retorno e tipos de parâmetros
@@ -518,15 +553,29 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
 
         for (AlgumaGrammarParser.IdentificadorContext id : ctx.identificador()){
             nomeVar = id.IDENT(0).getText();
+            boolean isRegistro = false;
 
-            // Se o identificador tem mais de um IDENT, trata-se de um registro com atributo
-            if (!tabela.existe(nomeVar))
-                AlgumaSemanticoUtils.adicionarErroSemantico(id.getStart(), 
+            // Verifica se o identificador é um registro ou uma variável simples
+            if (tabela.existe(nomeVar)) {
+                AlgumaGrammar tipoVar = tabela.verificar(nomeVar);
+                if (tipoVar == AlgumaGrammar.REGISTRO) {
+                    isRegistro = true;
+                }
+            }
+            if (!tabela.existe(nomeVar)) {
+                AlgumaSemanticoUtils.adicionarErroSemantico(id.getStart(),
                     "identificador " + nomeVar + " nao declarado");
-            else if (!verificaAtributoRegistro(id)){
-                nomeVar = nomeVar + "." + id.IDENT(1).getText();
-                AlgumaSemanticoUtils.adicionarErroSemantico(id.getStart(), 
-                    "identificador " + nomeVar + " nao declarado");
+            } else if (isRegistro && id.IDENT().size() > 1) {
+                // Se é um registro, verificar se o atributo é válido
+                String nomeAtributo = nomeVar + "." + id.IDENT(1).getText();
+                if (!tabela.existe(nomeAtributo)) {
+                    AlgumaSemanticoUtils.adicionarErroSemantico(id.getStart(),
+                        "atributo " + nomeAtributo + " nao declarado no registro " + nomeVar);
+                }
+            } else if (isRegistro && id.IDENT().size() == 1) {
+                // Se é um registro, mas nenhum atributo foi especificado
+                AlgumaSemanticoUtils.adicionarErroSemantico(id.getStart(),
+                    "atributo nao especificado para o registro " + nomeVar);
             }
             
         }
@@ -571,8 +620,17 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         if (ctx.identificador() != null) {
             IdentificadorContext idc = ctx.identificador();
             String nomeCompleto = idc.IDENT(0).getText();  
-            System.out.println("Visitor Unario vendo "+nomeCompleto);
 
+            // Construir o nome completo se houver mais de um IDENT (ex: "vinho.nome")
+            if (idc.IDENT().size() > 1) {
+                for (int i = 1; i < idc.IDENT().size(); i++) {
+                    nomeCompleto += "." + idc.IDENT(i).getText();
+                }
+            }
+            
+            System.out.println("Visitor Unario vendo " + nomeCompleto);
+
+            
             // Havendo dimensão, trata como Array
             if (idc.dimensao() != null && !idc.dimensao().exp_aritmetica().isEmpty()) {
                 
@@ -592,10 +650,6 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
             } else {
                 boolean declarado = false;
 
-                if(ctx.identificador().IDENT().size()>1)
-                    nomeCompleto = nomeCompleto + "." + ctx.identificador().IDENT(1).getText();
-            
-
                 // Procura pelo identificador em todos os escopos aninhados
                 for (var tabela : escoposAninhados.percorrerEscoposAninhados()) {
                     if (tabela.existe(nomeCompleto)) {
@@ -613,6 +667,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         else if (ctx.IDENT() != null && ctx.expressao() != null) {
             String nomeFuncProc = ctx.IDENT().getText();
             ArrayList<TabelaDeSimbolos.AlgumaGrammar> assinatura = tabelaFuncaoProcedimento.get(nomeFuncProc);
+            
             if (assinatura == null) {
                 AlgumaSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), 
                     "funcao ou procedimento " + nomeFuncProc + " nao declarado");
@@ -736,7 +791,30 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
     public Void visitFator(AlgumaGrammarParser.FatorContext ctx) {
         return super.visitFator(ctx);
     }
-    
+        
+
+    @Override
+    public Void visitCmdRetorne(AlgumaGrammarParser.CmdRetorneContext ctx) {
+        // Obter o escopo atual
+        tabela = escoposAninhados.obterEscopoAtual();
+
+        // Verificar se o escopo atual é de uma função
+        boolean dentroDeFuncao = false;
+        for (var escopo : escoposAninhados.percorrerEscoposAninhados()) {
+
+        // TO-DO: IMPLEMENTAR VERIFICAÇÃO SE O ESCOPO ATUAL É UMA FUNÇÃO
+        
+        }
+
+        // Se não estiver dentro de uma função, adicionar erro semântico
+        if (!dentroDeFuncao) {
+            AlgumaSemanticoUtils.adicionarErroSemantico(ctx.getStart(),
+                "comando retorne nao permitido nesse escopo");
+        }
+
+        return super.visitCmdRetorne(ctx);
+    }
+
     @Override
     public Void visitCmdPara(AlgumaGrammarParser.CmdParaContext ctx) {
         tabela = escoposAninhados.obterEscopoAtual();
@@ -746,21 +824,14 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
         if (!tabela.existe(nomeVariavel)) {
             tabela.adicionar(nomeVariavel, TabelaDeSimbolos.AlgumaGrammar.INTEIRO, TipoEntrada.VARIAVEL, false, -1);
     
-        } else {
-            int valorInicial = Integer.parseInt(ctx.exp_aritmetica(0).getText());
-            int valorFinal = Integer.parseInt(ctx.exp_aritmetica(1).getText());
+        } 
 
-            // Ensure that the loop is within array bounds when iterating over an array
-            if (tabela.verificartipoEnt(nomeVariavel) == TipoEntrada.ARRAY) {
-                int tamanhoArray = tabela.verificarTamanhoArray(nomeVariavel);
+        // Avaliar o valor inicial e o valor final como expressões aritméticas
+        //AlgumaGrammar tipoInicial = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.exp_aritmetica(0));
+        //AlgumaGrammar tipoFinal = AlgumaSemanticoUtils.verificarTipo(tabela, ctx.exp_aritmetica(1));
 
-                if (valorFinal >= tamanhoArray) {
-                    AlgumaSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), 
-                        "indice final " + valorFinal + " fora dos limites do array " + nomeVariavel);
-                }
-            }
-        }
-        visitChildren(ctx);
+    // Executar os filhos do nó atual
+    visitChildren(ctx);
 
 
         return super.visitCmdPara(ctx);

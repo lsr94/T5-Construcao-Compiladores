@@ -56,6 +56,10 @@ public class TabelaDeSimbolos {
         tabela.remove(nome);
     }
     
+    public boolean verificarRegistro(String nomeRegistro) {
+        return tabela.containsKey(nomeRegistro);
+    }
+
     public int verificarTamanhoArray(String nome) {
         return tabela.get(nome).tamanhoArray;
     }

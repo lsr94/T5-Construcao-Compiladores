@@ -17,7 +17,7 @@
             "mainClass": "br.ufscar.dc.compiladores.alguma.grammar.Principal",
             "projectName": "alguma-grammar",
             "args": [
-                "C:\\Users\\letic\\OneDrive\\Documentos\\UFSCAR\\Compiladores_2023_1\\T4-Construcao-Compiladores\\alguma-grammar\\casos-de-teste\\4.casos_teste_t4\\entrada\\3.algoritmo_8-3_apostila_LA.txt",
+                "C:\\Users\\letic\\OneDrive\\Documentos\\UFSCAR\\Compiladores_2023_1\\T4-Construcao-Compiladores\\alguma-grammar\\casos-de-teste\\4.casos_teste_t4\\entrada\\6.algoritmo_11-1_apostila_LA.txt",
                 "C:\\Users\\letic\\OneDrive\\Documentos\\UFSCAR\\Compiladores_2023_1\\T4-Construcao-Compiladores\\alguma-grammar\\temp\\saida.txt"
             ]
         }
