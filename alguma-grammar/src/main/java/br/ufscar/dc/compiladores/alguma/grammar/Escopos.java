@@ -1,5 +1,6 @@
 package br.ufscar.dc.compiladores.alguma.grammar;
 
+
 import java.util.LinkedList;
 import java.util.List;
 

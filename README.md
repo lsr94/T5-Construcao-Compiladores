@@ -1,8 +1,8 @@
-# T3-Construcao-Compiladores
+# T4-Construcao-Compiladores
 
-## T3 - Analisador Semântico ##
-Neste repositório, encontra-se o terceiro trabalho realizado na disciplina de Construção de Compiladores ofertada no 1º semestre de 2024 ministrada pelo Prof. Dr. Daniel Lucrédio.
-O objetivo do mesmo é desenvolver um analisador semântico. Abaixo, encontra-se as instruções do que é necessário ter instalado na máquina pessoal para executar o analisador, assim como, compilar e executá-lo. Ademais, conterá a explicação da gramática criada mediante regras para atender aos casos de teste fornecidos pelo professor (foi reaproveitada a gramática do analisador léxico e a gramática do analisador semântico, respectivamente, do T1 e T2).
+## T4 - Analisador Semântico com Adicionais ##
+Neste repositório, encontra-se o quarto trabalho realizado na disciplina de Construção de Compiladores ofertada no 1º semestre de 2024 ministrada pelo Prof. Dr. Daniel Lucrédio.
+O objetivo do mesmo é aprimorar o analisador semântico que foi desenvolvido no trabalho anterior (3º), de tal modo que seja adicionado casos para cobrir o uso de ponteiros, registros e funções. Abaixo, encontra-se as instruções do que é necessário ter instalado na máquina pessoal para executar o analisador, assim como, compilar e executá-lo. Ademais, conterá a explicação da gramática criada mediante regras para atender aos casos de teste fornecidos pelo professor.
 Espera-se que este analisador semântico funcione nos sistemas operacionais: Linux, Windows e macOS.
 
 ## Integrantes ##
@@ -20,7 +20,7 @@ Verifique se o Java e Maven estão definidos nas variáveis de ambiente de seu s
 ## Instruções de uso ##
 O trabalho foi desenvolvido usando a IDE Visual Studio Code e a execução ocorreu em dois sistemas operacionais diferentes: Linux (Ubuntu) e Windows 10.
 
-Para facilitar o *download* do trabalho, acesse a pasta: ![T3](https://github.com/letMarchezi/T3-Construcao-Compiladores/tree/main/alguma-grammar).
+Para facilitar o *download* do trabalho, acesse a pasta: ![T4](https://github.com/letMarchezi/T4-Construcao-Compiladores/tree/main/alguma-grammar).
 
 Após realizar o *download*, o projeto pode ser aberto no VS (visual studio). Veja abaixo como fazer:
 ![](https://github.com/letMarchezi/T1/assets/110498717/c3dd0f2a-c792-4519-96a6-775352a1e38e)
@@ -57,18 +57,18 @@ Onde:
 Um exemplo de execução é a seguinte:
 - Linux
 
-  		java -jar /home/lara/Documentos/T3-Construcao-Compiladores/alguma-grammar/target/alguma-grammar-1.0-SNAPSHOT-jar-with-dependencies.jar /home/lara/Documentos/T3-Construcao-Compiladores/alguma-grammar/casos-de-teste/3.casos_teste_t3/entrada/4.algoritmo_3-2_apostila_LA.txt /home/lara/Documentos/T3-Construcao-Compiladores/alguma-grammar/resultado
+  		java -jar /home/lara/Documentos/T4-Construcao-Compiladores/alguma-grammar/target/alguma-grammar-1.0-SNAPSHOT-jar-with-dependencies.jar /home/lara/Documentos/T4-Construcao-Compiladores/alguma-grammar/casos-de-teste/4.casos_teste_t4/entrada/8.algoritmo_9-2_apostila_LA.txt /home/lara/Documentos/T4-Construcao-Compiladores/alguma-grammar/resultado
 
 - Windows
 
-		java -jar D:\Documentos\UFSCar\Compiladores-2024.1\T3-Construcao-Compiladores\alguma-grammar\target\alguma-grammar-1.0-SNAPSHOT-jar-with-dependencies.jar D:\Documentos\UFSCar\Compiladores-2024.1\casos-de-teste/3.casos_teste_t3/entrada/4.algoritmo_3-2_apostila_LA.txt D:\Documentos\UFSCar\Compiladores-2024.1\T3-Construcao-Compiladores\saida.txt
+		java -jar D:\Documentos\UFSCar\Compiladores-2024.1\T4-Construcao-Compiladores\alguma-grammar\target\alguma-grammar-1.0-SNAPSHOT-jar-with-dependencies.jar D:\Documentos\UFSCar\Compiladores-2024.1\casos-de-teste/4.casos_teste_t4/entrada/8.algoritmo_9-2_apostila_LA.txt D:\Documentos\UFSCar\Compiladores-2024.1\T4-Construcao-Compiladores\saida.txt
 
 
 ### Correção automática ###
 
 A análise semântica também pode ser realizada por meio do ![corretor automatico](https://github.com/dlucredio/compiladores-corretor-automatico/tree/master), executando o analisador em lotes em conjunto com a correção dos resultados, comparando a saída gerada com o resultado esperado. 
 
-Há 9 casos a serem testados para este trabalho. Acesse a pasta completa em: ![casos-de-teste](https://github.com/letMarchezi/T3-Construcao-Compiladores/tree/main/alguma-grammar/casos-de-teste/3.casos_teste_t3). 
+Há 9 casos a serem testados para este trabalho. Acesse a pasta completa em: ![casos-de-teste](https://github.com/letMarchezi/T4-Construcao-Compiladores/tree/main/alguma-grammar/casos-de-teste/4.casos_teste_t4). 
 
 A execução do corretor automático é feita com o seguinte comando:
 
@@ -89,20 +89,15 @@ Exemplos:
 
 - Linux
 
-		java -jar /home/lara/Documentos/T3-Construcao-Compiladores/alguma-grammar/compiladores-corretor-automatico-1.0-SNAPSHOT-jar-with-dependencies.jar "java -jar /home/lara/Documentos/T3-Construcao-Compiladores/alguma-grammar/target/alguma-grammar-1.0-SNAPSHOT-jar-with-dependencies.jar" gcc /home/lara/Documentos/T3-Construcao-Compiladores/alguma-grammar/temp /home/lara/Documentos/T3-Construcao-Compiladores/alguma-grammar/casos-de-teste "769701, 791003" t3
+		java -jar /home/lara/Documentos/T4-Construcao-Compiladores/alguma-grammar/compiladores-corretor-automatico-1.0-SNAPSHOT-jar-with-dependencies.jar "java -jar /home/lara/Documentos/T4-Construcao-Compiladores/alguma-grammar/target/alguma-grammar-1.0-SNAPSHOT-jar-with-dependencies.jar" gcc /home/lara/Documentos/T4-Construcao-Compiladores/alguma-grammar/temp /home/lara/Documentos/T4-Construcao-Compiladores/alguma-grammar/casos-de-teste "769701, 791003" t4
 
 - Windows
 
-		java -jar D:\Documentos\UFSCar\Compiladores-2024.1\T3-Construcao-Compiladores\alguma-grammar\compiladores-corretor-automatico-1.0-SNAPSHOT-jar-with-dependencies.jar "java -jar D:\Documentos\UFSCar\Compiladores-2024.1\T3-Construcao-Compiladores\alguma-grammar\target\alguma-grammar-1.0-SNAPSHOT-jar-with-dependencies.jar" gcc temp D:\Documentos\UFSCar\Compiladores-2024.1\casos-de-teste "769701, 791003" t3
+		java -jar D:\Documentos\UFSCar\Compiladores-2024.1\T4-Construcao-Compiladores\alguma-grammar\compiladores-corretor-automatico-1.0-SNAPSHOT-jar-with-dependencies.jar "java -jar D:\Documentos\UFSCar\Compiladores-2024.1\T4-Construcao-Compiladores\alguma-grammar\target\alguma-grammar-1.0-SNAPSHOT-jar-with-dependencies.jar" gcc temp D:\Documentos\UFSCar\Compiladores-2024.1\casos-de-teste "769701, 791003" t4
 
 
 ## Gramática ##
 A gramática utilizada no desenvolvimento do trabalho foi a especificada nos casos de teste apresentados acima e vista em sala de aula. Para conferi-lá em mais detalhes, recomenda-se a visualização do arquivo **AlgumaGrammar.g4**. Como é a mesma utilizada no T2 (referente a análise sintática), veja a documentação completa realizada em ![T2-README.md](https://github.com/letMarchezi/T2-Construcao-Compiladores/blob/main/README.md) na sessão GRAMÁTICA.
 
-## Novos arquivos ##
-Para o desenvolvimento deste trabalho, foi necessário criar novos arquivos, cada um com seu significado de implementação, dado que nos trabalhos anteriores não tinha sido necessário. De tal modo, temos:
-- AlgumaSemantico.java: define o comportamento do analisador semântico, isto é, funções que são necessárias para verificar as entradas com base na linguagem criada
-- AlgumaSemanticoUtils.java: define funções utilitárias que devem ser utilizadas como auxílio as funções do arquivo AlgumaSemantico.java;
-- Escopos.java: define o escopo da linguagem e funções genéricas de escopo;
-- Principal.java: arquivo de execução principal do trabalho no qual realiza a inicialização do programa, leitura e escrita das informações a partir de um arquivo;
-- TabelaDeSimbolos.java: define a tabela de símbolos, assim como funções genéricas para a mesma;
+## Adicionais ##
+Como este trabalho é um aprimoramento do trabalho anterior, a gramática, assim como os demais arquivos são os mesmos. As mudanças ocorridas são para abranger a inclusão do uso de ponteiros, registros e funções, de tal modo que se encontram nos arquivos, de acordo com o que foi necessário desenvolver para englobar os casos de teste.

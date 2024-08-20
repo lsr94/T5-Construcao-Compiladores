@@ -1,5 +1,6 @@
 package br.ufscar.dc.compiladores.alguma.grammar;
 
+
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.DeclaracoesContext;
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.IdentificadorContext;
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.ParcelaContext;
@@ -570,7 +571,7 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
                 String nomeAtributo = nomeVar + "." + id.IDENT(1).getText();
                 if (!tabela.existe(nomeAtributo)) {
                     AlgumaSemanticoUtils.adicionarErroSemantico(id.getStart(),
-                        "atributo " + nomeAtributo + " nao declarado no registro " + nomeVar);
+                        "identificador " + nomeAtributo + " nao declarado");
                 }
             } else if (isRegistro && id.IDENT().size() == 1) {
                 // Se é um registro, mas nenhum atributo foi especificado

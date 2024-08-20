@@ -6,6 +6,7 @@ Desenvolvido por:
 */
 package br.ufscar.dc.compiladores.alguma.grammar;
 
+
 import br.ufscar.dc.compiladores.alguma.grammar.AlgumaGrammarParser.ProgramaContext;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
