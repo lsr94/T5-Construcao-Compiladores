@@ -8,6 +8,7 @@ br/ufscar/dc/compiladores/alguma/grammar/AlgumaGrammarParser$Tipo_estendidoConte
 br/ufscar/dc/compiladores/alguma/grammar/AlgumaGrammarParser$ParametroContext.class
 br/ufscar/dc/compiladores/alguma/grammar/AlgumaGrammarParser$Op_logico_1Context.class
 br/ufscar/dc/compiladores/alguma/grammar/AlgumaGrammarParser$CorpoContext.class
+br/ufscar/dc/compiladores/alguma/grammar/GeradorC$1.class
 br/ufscar/dc/compiladores/alguma/grammar/TabelaDeSimbolos$AlgumaGrammar.class
 br/ufscar/dc/compiladores/alguma/grammar/AlgumaSemantico.class
 br/ufscar/dc/compiladores/alguma/grammar/AlgumaGrammarLexer.class
@@ -24,6 +25,7 @@ br/ufscar/dc/compiladores/alguma/grammar/Escopos.class
 br/ufscar/dc/compiladores/alguma/grammar/AlgumaGrammarParser$Declaracao_localContext.class
 br/ufscar/dc/compiladores/alguma/grammar/AlgumaGrammarListener.class
 br/ufscar/dc/compiladores/alguma/grammar/AlgumaGrammarParser$Parcela_logicaContext.class
+br/ufscar/dc/compiladores/alguma/grammar/GeradorC.class
 br/ufscar/dc/compiladores/alguma/grammar/AlgumaGrammarParser$Tipo_basico_identContext.class
 br/ufscar/dc/compiladores/alguma/grammar/Principal.class
 br/ufscar/dc/compiladores/alguma/grammar/AlgumaSemanticoUtils.class

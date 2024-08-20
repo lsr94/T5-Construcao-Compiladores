@@ -42,6 +42,11 @@ public class Principal {
             AlgumaSemanticoUtils.errosSemanticos.forEach((s) -> System.out.println(s));
             AlgumaSemanticoUtils.errosSemanticos.forEach((s) -> buffer.append(s + "\n"));
 
+            if (AlgumaSemanticoUtils.errosSemanticos.isEmpty()) {
+                GeradorC codigoC = new GeradorC();
+                codigoC.visitPrograma(arvore);
+            }
+
         } catch (Exception ex) {
             // Detecção de exceções
             System.err.println("Erro: " + ex.getMessage());

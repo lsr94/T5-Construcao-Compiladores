@@ -41,8 +41,6 @@ public class AlgumaSemantico extends AlgumaGrammarBaseVisitor<Void> {
     public AlgumaGrammar determinarTipoAlgumaGrammar(String tipoVariavel){
         AlgumaGrammar tipoItem = AlgumaGrammar.INVALIDO; 
         
-
-        
         switch (tipoVariavel) {
             case "literal":
                 tipoItem = AlgumaGrammar.LITERAL;
